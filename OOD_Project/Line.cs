@@ -20,6 +20,9 @@ public class Line
 
     private void Init(string LineString)
     {
+        //LineString format:
+        //"<numberHex>(<numberDec>)`<commonName>`@<stop id>,...!<vehicle id>,..."
+        
         this.numberHex = Regex.Match(LineString, "[^(]+").Value;
         this.numberDec = int.Parse(
             Regex.Match(LineString, "\\([^)]+")
@@ -30,17 +33,17 @@ public class Line
         this.stop_ids = new List<int>();
         var stop_ids = Regex.Match(LineString, "@[^!]+")
             .Value[1..].Split(",").ToList();
-        foreach (var s in stop_ids)
+        foreach (var stopId in stop_ids)
         {
-            this.stop_ids.Add(int.Parse(s));
+            this.stop_ids.Add(int.Parse(stopId));
         }
 
         this.vehicle_ids = new List<int>();
         var vehicle_ids = Regex.Match(LineString, "!.+")
             .Value[1..].Split(",").ToList();
-        foreach (var s in vehicle_ids)
+        foreach (var vehicleId in vehicle_ids)
         {
-            this.vehicle_ids.Add(int.Parse(s));
+            this.vehicle_ids.Add(int.Parse(vehicleId));
         }
         
     }

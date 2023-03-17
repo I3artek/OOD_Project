@@ -17,20 +17,23 @@ public class Stop
 
     private void Init(string StopString)
     {
+        //StopString format:
+        //"#<id>(<line id>,...)<name>/<type>"
+        
         this.id = int.Parse(
             Regex.Match(StopString, "#[^(]+").Value[1..]);
 
         this.line_ids = new List<int>();
         var line_ids = Regex.Match(StopString, "\\([^)]+")
             .Value[1..].Split(",");
-        foreach (var s in line_ids)
+        foreach (var lineId in line_ids)
         {
-            this.line_ids.Add(int.Parse(s));
+            this.line_ids.Add(int.Parse(lineId));
         }
 
         this.name = Regex.Match(StopString, "\\)[^/]+").Value[1..];
         var type = Regex.Match(StopString, "/.+").Value[1..];
-        Enum.TryParse<typeEnum>(type, out this.type);
+        Enum.TryParse(type, out this.type);
     }
 }
 

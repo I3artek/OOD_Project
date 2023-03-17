@@ -9,24 +9,59 @@ public class City
     private List<Vehicle> vehicles { get; set; }
     private List<Driver> drivers { get; set; }
 
-    public City()
+    public City(CityStrings cs)
     {
         this.lines = new List<Line>();
         this.stops = new List<Stop>();
         this.vehicles = new List<Vehicle>();
         this.drivers = new List<Driver>();
+        
+        InitFromStringCity(cs);
+    }
+
+    private void InitFromStringCity(CityStrings cs)
+    {
+        foreach (var csLine in cs.lines)
+        {
+            this.lines.Add(new Line(csLine));
+        }
+
+        foreach (var csStop in cs.stops)
+        {
+            this.stops.Add(new Stop(csStop));
+        }
+        
+        foreach (var csBytebus in cs.bytebuses)
+        {
+            this.vehicles.Add(new Bytebus(csBytebus));
+        }
+        
+        foreach (var csTrambit in cs.trambits)
+        {
+            this.vehicles.Add(new Trambit(csTrambit));
+        }
+        
+        foreach (var csDriver in cs.drivers)
+        {
+            this.drivers.Add(new Driver(csDriver));
+        }
     }
 }
 
 public class CityStrings
 {
-    private List<string> lines { get; set; }
-    private List<string> stops { get; set; }
-    private List<string> bytebuses { get; set; }
-    private List<string> trambits { get; set; }
-    private List<string> drivers { get; set; }
+    public List<string> lines { get; private set; }
+    public List<string> stops { get; private set; }
+    public List<string> bytebuses { get; private set; }
+    public List<string> trambits { get; private set; }
+    public List<string> drivers { get; private set; }
 
-    public static void InitializeWithExampleData(CityStrings city)
+    public CityStrings()
+    {
+        InitializeWithExampleData(this);
+    }
+
+    private static void InitializeWithExampleData(CityStrings city)
     {
         city.lines = new List<string>
         {
@@ -45,6 +80,26 @@ public class CityStrings
             "#7(23,14)Bitazon/tram",
             "#8(16,14)Bytecroft/bus",
             "#9(14)Maple/other"
+        };
+        city.bytebuses = new List<string>
+        {
+            "#11^Byte5*16,23",
+            "#12^bisel20*16",
+            "#13^bisel20*16",
+            "#14^gibgaz*23,14",
+            "#15^gibgaz*23"
+        };
+        city.trambits = new List<string>
+        {
+            "#21(1)14",
+            "#22(2)14",
+            "#23(6)14"
+        };
+        city.drivers = new List<string>
+        {
+            "Tomas Chairman(20)@11,21,15",
+            "Tomas Thetank(4)@12,13,14",
+            "Oru Bii(55)@22,23"
         };
     }
 }

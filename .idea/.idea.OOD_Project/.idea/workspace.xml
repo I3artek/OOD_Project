@@ -4,7 +4,25 @@
     <projectFile>OOD_Project/OOD_Project.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a50dfe7-cdb9-4504-9331-1ba24c085595" name="Changes" comment="" />
+    <list default="true" id="1a50dfe7-cdb9-4504-9331-1ba24c085595" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/OOD_Project/MyExceptions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.OOD_Project/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.OOD_Project/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/Bytebus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/Bytebus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/City.cs" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/City.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/Driver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/Driver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/IVehicle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/Vehicle.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/Line.cs" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/Line.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/Stop.cs" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/Stop.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/Trambit.cs" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/Trambit.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/bin/Debug/net6.0/OOD_Project.dll" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/bin/Debug/net6.0/OOD_Project.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/bin/Debug/net6.0/OOD_Project.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/bin/Debug/net6.0/OOD_Project.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/obj/Debug/net6.0/OOD_Project.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/obj/Debug/net6.0/OOD_Project.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/obj/Debug/net6.0/OOD_Project.dll" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/obj/Debug/net6.0/OOD_Project.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/obj/Debug/net6.0/OOD_Project.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/obj/Debug/net6.0/OOD_Project.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/obj/Debug/net6.0/ref/OOD_Project.dll" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/obj/Debug/net6.0/ref/OOD_Project.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOD_Project/obj/Debug/net6.0/refint/OOD_Project.dll" beforeDir="false" afterPath="$PROJECT_DIR$/OOD_Project/obj/Debug/net6.0/refint/OOD_Project.dll" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,6 +45,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
@@ -64,6 +83,7 @@
       <updated>1678987306873</updated>
       <workItem from="1678987312003" duration="5550000" />
       <workItem from="1679047223083" duration="7987000" />
+      <workItem from="1679057301713" duration="6600000" />
     </task>
     <servers />
   </component>
@@ -85,25 +105,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/OOD_Project/Program.cs</url>
-          <line>32</line>
-          <properties documentPath="$PROJECT_DIR$/OOD_Project/Program.cs" initialLine="32" containingFunctionPresentation="method 'Main'">
-            <startOffsets>
-              <option value="988" />
-            </startOffsets>
-            <endOffsets>
-              <option value="989" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
