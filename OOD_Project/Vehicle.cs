@@ -2,5 +2,5 @@ namespace OOD_Project;
 
 public abstract class Vehicle
 {
-    protected int id;
+    public int id { get; protected set; }
 }

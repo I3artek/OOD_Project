@@ -4,10 +4,10 @@ namespace OOD_Project;
 
 public class City
 {
-    private List<Line> lines { get; set; }
-    private List<Stop> stops { get; set; }
-    private List<Vehicle> vehicles { get; set; }
-    private List<Driver> drivers { get; set; }
+    public List<Line> lines { get; private set; }
+    public List<Stop> stops { get; private set; }
+    public List<Vehicle> vehicles { get; private set; }
+    public List<Driver> drivers { get; private set; }
 
     public City(CityStrings cs)
     {
@@ -21,40 +21,52 @@ public class City
 
     private void InitFromStringCity(CityStrings cs)
     {
+        //contain references to stops and vehicles
         foreach (var csLine in cs.lines)
         {
-            this.lines.Add(new Line(csLine));
+            this.lines.Add(new Line(csLine, this));
         }
-
+        
+        //contain references to lines
         foreach (var csStop in cs.stops)
         {
-            this.stops.Add(new Stop(csStop));
+            this.stops.Add(new Stop(csStop, this));
         }
         
+        //contain references to lines
         foreach (var csBytebus in cs.bytebuses)
         {
-            this.vehicles.Add(new Bytebus(csBytebus));
+            this.vehicles.Add(new Bytebus(csBytebus, this));
         }
         
+        //contain references to lines
         foreach (var csTrambit in cs.trambits)
         {
-            this.vehicles.Add(new Trambit(csTrambit));
+            this.vehicles.Add(new Trambit(csTrambit, this));
         }
         
+        //contain references to vehicles
         foreach (var csDriver in cs.drivers)
         {
-            this.drivers.Add(new Driver(csDriver));
+            this.drivers.Add(new Driver(csDriver, this));
+        }
+        
+        //we need to update references for lines
+        //as they were initialized before stops and vehicles
+        foreach (var line in lines)
+        {
+            line.UpdateRefs();
         }
     }
 }
 
 public class CityStrings
 {
-    public List<string> lines { get; private set; }
-    public List<string> stops { get; private set; }
-    public List<string> bytebuses { get; private set; }
-    public List<string> trambits { get; private set; }
-    public List<string> drivers { get; private set; }
+    public List<LineString> lines { get; private set; }
+    public List<StopString> stops { get; private set; }
+    public List<BytebusString> bytebuses { get; private set; }
+    public List<TrambitString> trambits { get; private set; }
+    public List<DriverString> drivers { get; private set; }
 
     public CityStrings()
     {
@@ -63,43 +75,43 @@ public class CityStrings
 
     private static void InitializeWithExampleData(CityStrings city)
     {
-        city.lines = new List<string>
+        city.lines = new List<LineString>
         {
-            "10(16)`SIMD`@1,2,3,8!11,12,13",
-            "17(23)`Isengard-Mordor`@4,5,6,7!11,14,15",
-            "E(14)`Museum of Plant`@7,8,9!14,21,22,23"
+            new("10(16)`SIMD`@1,2,3,8!11,12,13"),
+            new("17(23)`Isengard-Mordor`@4,5,6,7!11,14,15"),
+            new("E(14)`Museum of Plant`@7,8,9!14,21,22,23")
         };
-        city.stops = new List<string>
+        city.stops = new List<StopString>
         {
-            "#1(16)SPIR-V/bus",
-            "#2(16)GLSL/tram",
-            "#3(16)HLSL/other",
-            "#4(23)DolGuldur/bus",
-            "#5(23)AmonHen/bus",
-            "#6(23)Gondolin/bus",
-            "#7(23,14)Bitazon/tram",
-            "#8(16,14)Bytecroft/bus",
-            "#9(14)Maple/other"
+            new("#1(16)SPIR-V/bus"),
+            new("#2(16)GLSL/tram"),
+            new("#3(16)HLSL/other"),
+            new("#4(23)DolGuldur/bus"),
+            new("#5(23)AmonHen/bus"),
+            new("#6(23)Gondolin/bus"),
+            new("#7(23,14)Bitazon/tram"),
+            new("#8(16,14)Bytecroft/bus"),
+            new("#9(14)Maple/other")
         };
-        city.bytebuses = new List<string>
+        city.bytebuses = new List<BytebusString>
         {
-            "#11^Byte5*16,23",
-            "#12^bisel20*16",
-            "#13^bisel20*16",
-            "#14^gibgaz*23,14",
-            "#15^gibgaz*23"
+            new("#11^Byte5*16,23"),
+            new("#12^bisel20*16"),
+            new("#13^bisel20*16"),
+            new("#14^gibgaz*23,14"),
+            new("#15^gibgaz*23")
         };
-        city.trambits = new List<string>
+        city.trambits = new List<TrambitString>
         {
-            "#21(1)14",
-            "#22(2)14",
-            "#23(6)14"
+            new("#21(1)14"),
+            new("#22(2)14"),
+            new("#23(6)14")
         };
-        city.drivers = new List<string>
+        city.drivers = new List<DriverString>
         {
-            "Tomas Chairman(20)@11,21,15",
-            "Tomas Thetank(4)@12,13,14",
-            "Oru Bii(55)@22,23"
+            new("Tomas Chairman(20)@11,21,15"),
+            new("Tomas Thetank(4)@12,13,14"),
+            new("Oru Bii(55)@22,23")
         };
     }
 }

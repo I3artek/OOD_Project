@@ -4,42 +4,108 @@ namespace OOD_Project;
 
 public class Stop
 {
-    private int id;
-    private List<int> line_ids;
-    private List<Line> lines;
-    private string name;
-    private typeEnum type;
+    public int id { get; private set; }
+    public List<int> line_ids { get; private set; }
+    public List<Line> lines { get; private set; }
+    public string name { get; private set; }
+    public typeEnum type { get; private set; }
+    public City _city { get; private set; }
+    public StopString rep1 { get; private set; }
 
-    public Stop(string StopString)
+    public Stop(StopString ss, City city)
     {
-        this.Init(StopString);
+        this._city = city;
+        this.rep1 = ss;
+        this.Init(ss);
+        this.InitRefs();
+        ss.rep0 = this;
     }
 
-    private void Init(string StopString)
+    private void Init(StopString ss)
     {
-        //StopString format:
+        var stopString = ss.GetStringValue();
+        //stopString format:
         //"#<id>(<line id>,...)<name>/<type>"
         
         this.id = int.Parse(
-            Regex.Match(StopString, "#[^(]+").Value[1..]);
+            Regex.Match(stopString, "#[^(]+").Value[1..]);
 
         this.line_ids = new List<int>();
-        var line_ids = Regex.Match(StopString, "\\([^)]+")
+        var line_ids = Regex.Match(stopString, "\\([^)]+")
             .Value[1..].Split(",");
         foreach (var lineId in line_ids)
         {
             this.line_ids.Add(int.Parse(lineId));
         }
 
-        this.name = Regex.Match(StopString, "\\)[^/]+").Value[1..];
-        var type = Regex.Match(StopString, "/.+").Value[1..];
-        Enum.TryParse(type, out this.type);
+        this.name = Regex.Match(stopString, "\\)[^/]+").Value[1..];
+        var type = Regex.Match(stopString, "/.+").Value[1..];
+        Enum.TryParse(type, out typeEnum _type);
+        this.type = _type;
+    }
+
+    private void InitRefs()
+    {
+        this.lines = new List<Line>();
+        
+        this.UpdateRefs();
+    }
+
+    public void UpdateRefs()
+    {
+        foreach (var lineId in line_ids)
+        {
+            foreach (var cityLine in _city.lines)
+            {
+                if (cityLine.numberDec == lineId)
+                {
+                    this.lines.Add(cityLine);
+                }
+            }
+        }
+    }
+    
+    public override string ToString()
+    {
+        var s = "Stop" + Environment.NewLine;
+        s += "- id: " + this.id + Environment.NewLine;
+        s += "- lines: ";
+        foreach (var lineId in line_ids)
+        {
+            s += lineId + " ";
+        }
+        s += Environment.NewLine;
+        s += "- name: " + this.name + Environment.NewLine;
+        s += "- type: " + this.type + Environment.NewLine;
+        return s;
     }
 }
 
-enum typeEnum
+public enum typeEnum
 {
     bus,
     tram,
     other
+}
+
+public class StopString
+{
+    private string value;
+    public Stop rep0 { get; set; }
+    private CityStrings _cityStrings;
+
+    public StopString(string s)
+    {
+        this.value = s;
+    }
+
+    public string GetStringValue()
+    {
+        return this.value;
+    }
+    
+    public override string ToString()
+    {
+        return rep0 != null ? rep0.ToString() : value;
+    }
 }
