@@ -79,6 +79,32 @@ public class Stop
         s += "- type: " + this.type + Environment.NewLine;
         return s;
     }
+    
+    public string ToRep1String()
+    {
+        //stopString format:
+        //"#<id>(<line id>,...)<name>/<type>"
+        var stopString = "#" + this.id + "(";
+        foreach (var lineId in line_ids)
+        {
+            stopString += lineId + ",";
+        }
+        //remove unnecessary colon
+        stopString = stopString.Remove(stopString.Length - 1);
+        stopString += ")"
+                      + this.name + "/"
+                      + this.type;
+        return stopString;
+    }
+
+    public StopString ToRep1()
+    {
+        var ss = new StopString(this.ToRep1String())
+        {
+            rep0 = this
+        };
+        return ss;
+    }
 }
 
 public enum typeEnum
@@ -96,12 +122,24 @@ public class StopString
 
     public StopString(string s)
     {
-        this.value = s;
+        if (IsValid(s))
+        {
+            this.value = s;
+        }
+        else
+        {
+            throw new InvalidDataFormatException(this, s);
+        }
     }
 
     public string GetStringValue()
     {
         return this.value;
+    }
+
+    public static bool IsValid(string s)
+    {
+        return Regex.IsMatch(s, "#\\d+\\((?:\\d+,)*\\d+\\).+/.+");
     }
     
     public override string ToString()

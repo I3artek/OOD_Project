@@ -76,6 +76,31 @@ public class Driver
         s += "- seniority: " + this.seniority + Environment.NewLine;
         return s;
     }
+    
+    public string ToRep1String()
+    {
+        //driverString format:
+        //"<name> <surname>(<seniority>)@<vehicle id>,..."
+        var driverString = this.name + " "
+                                     + this.surname + "("
+                                     + this.seniority + ")@";
+        foreach (var vehicleId in vehicle_ids)
+        {
+            driverString += vehicleId + ",";
+        }
+        //remove unnecessary colon
+        driverString = driverString.Remove(driverString.Length - 1);
+        return driverString;
+    }
+
+    public DriverString ToRep1()
+    {
+        var ds = new DriverString(this.ToRep1String())
+        {
+            rep0 = this
+        };
+        return ds;
+    }
 }
 
 public class DriverString
@@ -92,6 +117,11 @@ public class DriverString
     public string GetStringValue()
     {
         return this.value;
+    }
+
+    public static bool IsValid(string s)
+    {
+        return Regex.IsMatch(s, ".+ .+\\(\\d+\\)@(?:\\d+,)*\\d+");
     }
     
     public override string ToString()

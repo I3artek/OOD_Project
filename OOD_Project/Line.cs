@@ -149,12 +149,24 @@ public class LineString
 
     public LineString(string s)
     {
-        this.value = s;
+        if (IsValid(s))
+        {
+            this.value = s;
+        }
+        else
+        {
+            throw new InvalidDataFormatException(this, s);
+        }
     }
 
     public string GetStringValue()
     {
         return this.value;
+    }
+
+    public static bool IsValid(string s)
+    {
+        return Regex.IsMatch(s, ".+\\(\\d+\\)`.+`@(?:\\d+,)*\\d+!(?:\\d+,)*\\d+");
     }
 
     public override string ToString()

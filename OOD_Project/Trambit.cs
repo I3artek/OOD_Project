@@ -43,7 +43,7 @@ public class Trambit : Vehicle
         this.UpdateRefs();
     }
 
-    public void UpdateRefs()
+    public override void UpdateRefs()
     {
         foreach (var cityLine in _city.lines)
         {
@@ -62,9 +62,28 @@ public class Trambit : Vehicle
         s += "- line: " + this.line_id + Environment.NewLine;
         return s;
     }
+    
+    public override string ToRep1String()
+    {
+        //trambitString format:
+        //"#<id>(<carsNumber>)<line id>"
+        var trambitString = "#" + this.id + "("
+                            + this.carsNumber + ")"
+                            + this.line_id;
+        return trambitString;
+    }
+
+    public override TrambitString ToRep1()
+    {
+        var ts = new TrambitString(this.ToRep1String())
+        {
+            rep0 = this
+        };
+        return ts;
+    }
 }
 
-public class TrambitString
+public class TrambitString : VehicleString
 {
     private string value;
     public Trambit rep0 { get; set; }
@@ -72,12 +91,24 @@ public class TrambitString
 
     public TrambitString(string s)
     {
-        this.value = s;
+        if (IsValid(s))
+        {
+            this.value = s;
+        }
+        else
+        {
+            throw new InvalidDataFormatException(this, s);
+        }
     }
 
     public string GetStringValue()
     {
         return this.value;
+    }
+
+    public static bool IsValid(string s)
+    {
+        return Regex.IsMatch(s, "#\\d+\\(\\d+\\)\\d+");
     }
     
     public override string ToString()

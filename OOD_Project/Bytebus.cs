@@ -50,7 +50,7 @@ public class Bytebus : Vehicle
         this.UpdateRefs();
     }
 
-    public void UpdateRefs()
+    public override void UpdateRefs()
     {
         foreach (var lineId in line_ids)
         {
@@ -77,6 +77,30 @@ public class Bytebus : Vehicle
         s += "- engineClass: " + this.engineClass + Environment.NewLine;
         return s;
     }
+    
+    public override string ToRep1String()
+    {
+        //bytebusString format:
+        //"#<id>^<engineClass>*<line id>,..."
+        var bytebusString = "#" + this.id + "^"
+                            + this.engineClass + "*";
+        foreach (var lineId in line_ids)
+        {
+            bytebusString += lineId + ",";
+        }
+        //remove unnecessary colon
+        bytebusString = bytebusString.Remove(bytebusString.Length - 1);
+        return bytebusString;
+    }
+
+    public override BytebusString ToRep1()
+    {
+        var bs = new BytebusString(this.ToRep1String())
+        {
+            rep0 = this
+        };
+        return bs;
+    }
 }
 
 public enum engineClassEnum
@@ -86,7 +110,7 @@ public enum engineClassEnum
     gibgaz
 }
 
-public class BytebusString
+public class BytebusString : VehicleString
 {
     private string value;
     public Bytebus rep0 { get; set; }
@@ -94,12 +118,24 @@ public class BytebusString
 
     public BytebusString(string s)
     {
-        this.value = s;
+        if (IsValid(s))
+        {
+            this.value = s;
+        }
+        else
+        {
+            throw new InvalidDataFormatException(this, s);
+        }
     }
 
     public string GetStringValue()
     {
         return this.value;
+    }
+    
+    public static bool IsValid(string s)
+    {
+        return Regex.IsMatch(s, "#\\d+\\^.+\\*(?:\\d+,)*\\d+");
     }
     
     public override string ToString()
