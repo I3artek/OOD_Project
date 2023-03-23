@@ -10,15 +10,17 @@ public class Stop
     public string name { get; private set; }
     public typeEnum type { get; private set; }
     public City _city { get; private set; }
-    public StopString rep1 { get; private set; }
 
     public Stop(StopString ss, City city)
     {
         this._city = city;
-        this.rep1 = ss;
         this.Init(ss);
         this.InitRefs();
-        ss.rep0 = this;
+    }
+    
+    public Stop(StopString ss)
+    {
+        this.Init(ss);
     }
 
     private void Init(StopString ss)
@@ -99,11 +101,7 @@ public class Stop
 
     public StopString ToRep1()
     {
-        var ss = new StopString(this.ToRep1String())
-        {
-            rep0 = this
-        };
-        return ss;
+        return new StopString(this.ToRep1String());
     }
 }
 
@@ -117,8 +115,6 @@ public enum typeEnum
 public class StopString
 {
     private string value;
-    public Stop rep0 { get; set; }
-    private CityStrings _cityStrings;
 
     public StopString(string s)
     {
@@ -144,6 +140,6 @@ public class StopString
     
     public override string ToString()
     {
-        return rep0 != null ? rep0.ToString() : value;
+        return new Stop(this).ToString();
     }
 }

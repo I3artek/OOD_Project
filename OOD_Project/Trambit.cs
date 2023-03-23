@@ -8,15 +8,17 @@ public class Trambit : Vehicle
     public int line_id { get; private set; }
     public Line line { get; private set; }
     public City _city { get; private set; }
-    public TrambitString rep1 { get; private set; }
-    
+
     public Trambit(TrambitString ts, City city)
     {
         this._city = city;
-        this.rep1 = ts;
         this.Init(ts);
         this.InitRefs();
-        ts.rep0 = this;
+    }
+    
+    public Trambit(TrambitString ts)
+    {
+        this.Init(ts);
     }
 
     private void Init(TrambitString ts)
@@ -75,19 +77,13 @@ public class Trambit : Vehicle
 
     public override TrambitString ToRep1()
     {
-        var ts = new TrambitString(this.ToRep1String())
-        {
-            rep0 = this
-        };
-        return ts;
+        return new TrambitString(this.ToRep1String());
     }
 }
 
 public class TrambitString : VehicleString
 {
     private string value;
-    public Trambit rep0 { get; set; }
-    private CityStrings _cityStrings;
 
     public TrambitString(string s)
     {
@@ -113,6 +109,6 @@ public class TrambitString : VehicleString
     
     public override string ToString()
     {
-        return rep0 != null ? rep0.ToString() : value;
+        return new Trambit(this).ToString();
     }
 }

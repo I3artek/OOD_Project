@@ -8,15 +8,17 @@ public class Bytebus : Vehicle
     public List<Line> lines { get; private set; }
     public engineClassEnum engineClass { get; private set; }
     public City _city { get; private set; }
-    public BytebusString rep1 { get; private set; }
 
     public Bytebus(BytebusString bs, City city)
     {
         this._city = city;
-        this.rep1 = bs;
         this.Init(bs);
         this.InitRefs();
-        bs.rep0 = this;
+    }
+    
+    public Bytebus(BytebusString bs)
+    {
+        this.Init(bs);
     }
 
     private void Init(BytebusString bs)
@@ -95,11 +97,7 @@ public class Bytebus : Vehicle
 
     public override BytebusString ToRep1()
     {
-        var bs = new BytebusString(this.ToRep1String())
-        {
-            rep0 = this
-        };
-        return bs;
+        return new BytebusString(this.ToRep1String());
     }
 }
 
@@ -113,8 +111,6 @@ public enum engineClassEnum
 public class BytebusString : VehicleString
 {
     private string value;
-    public Bytebus rep0 { get; set; }
-    private CityStrings _cityStrings;
 
     public BytebusString(string s)
     {
@@ -140,6 +136,6 @@ public class BytebusString : VehicleString
     
     public override string ToString()
     {
-        return rep0 != null ? rep0.ToString() : value;
+        return new Bytebus(this).ToString();
     }
 }

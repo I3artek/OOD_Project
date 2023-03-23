@@ -13,15 +13,17 @@ public class Line
     public List<int> vehicle_ids { get; private set; }
     public List<Vehicle> vehicles { get; private set; }
     public City _city { get; private set; }
-    public LineString rep1 { get; private set; }
 
     public Line(LineString ls, City city)
     {
         this._city = city;
-        this.rep1 = ls;
         this.Init(ls);
         this.InitRefs();
-        ls.rep0 = this;
+    }
+    
+    public Line(LineString ls)
+    {
+        this.Init(ls);
     }
 
     private void Init(LineString ls)
@@ -133,19 +135,13 @@ public class Line
 
     public LineString ToRep1()
     {
-        var ls = new LineString(this.ToRep1String())
-        {
-            rep0 = this
-        };
-        return ls;
+        return new LineString(this.ToRep1String());
     }
 }
 
 public class LineString
 {
     private string value;
-    public Line rep0 { get; set; }
-    private CityStrings _cityStrings;
 
     public LineString(string s)
     {
@@ -171,6 +167,6 @@ public class LineString
 
     public override string ToString()
     {
-        return rep0 != null ? rep0.ToString() : value;
+        return new Line(this).ToString();
     }
 }

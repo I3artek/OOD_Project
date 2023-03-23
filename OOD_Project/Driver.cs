@@ -10,15 +10,17 @@ public class Driver
     public string surname { get; private set; }
     public int seniority { get; private set; }  
     public City _city { get; private set; }
-    public DriverString rep1 { get; private set; }
 
     public Driver(DriverString ds, City city)
     {
         this._city = city;
-        this.rep1 = ds;
         this.Init(ds);
         this.InitRefs();
-        ds.rep0 = this;
+    }
+    
+    public Driver(DriverString ds)
+    {
+        this.Init(ds);
     }
 
     private void Init(DriverString ds)
@@ -95,23 +97,24 @@ public class Driver
 
     public DriverString ToRep1()
     {
-        var ds = new DriverString(this.ToRep1String())
-        {
-            rep0 = this
-        };
-        return ds;
+        return new DriverString(this.ToRep1String());
     }
 }
 
 public class DriverString
 {
     private string value;
-    public Driver rep0 { get; set; }
-    private CityStrings _cityStrings;
 
     public DriverString(string s)
     {
-        this.value = s;
+        if (IsValid(s))
+        {
+            this.value = s;
+        }
+        else
+        {
+            throw new InvalidDataFormatException(this, s);
+        }
     }
 
     public string GetStringValue()
@@ -126,6 +129,6 @@ public class DriverString
     
     public override string ToString()
     {
-        return rep0 != null ? rep0.ToString() : value;
+        return new Driver(this).ToString();
     }
 }
