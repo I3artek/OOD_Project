@@ -139,7 +139,9 @@ public class StopString
 
     public static bool IsValid(string s)
     {
-        return Regex.IsMatch(s, "#\\d+\\((?:\\d+,)*\\d+\\).+/.+");
+        var types = new List<string>(Enum.GetNames(typeof(typeEnum)));
+        return Regex.IsMatch(s, "#\\d+\\((?:\\d+,)*\\d+\\).+/.+")
+               && types.Any(s.Contains);
     }
     
     public override string ToString()
