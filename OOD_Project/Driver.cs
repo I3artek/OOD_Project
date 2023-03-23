@@ -23,6 +23,10 @@ public class Driver
         this.Init(ds);
     }
 
+    public Driver(string s) : this(new DriverString(s))
+    {
+    }
+
     private void Init(DriverString ds)
     {
         var driverString = ds.GetStringValue();

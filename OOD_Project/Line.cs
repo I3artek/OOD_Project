@@ -26,6 +26,10 @@ public class Line
         this.Init(ls);
     }
 
+    public Line(string s) : this(new LineString(s))
+    {
+    }
+
     private void Init(LineString ls)
     {
         var lineString = ls.GetStringValue();

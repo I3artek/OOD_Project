@@ -23,6 +23,10 @@ public class Stop
         this.Init(ss);
     }
 
+    public Stop(string s) : this(new StopString(s))
+    {
+    }
+
     private void Init(StopString ss)
     {
         var stopString = ss.GetStringValue();

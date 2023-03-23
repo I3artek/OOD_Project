@@ -21,6 +21,10 @@ public class Trambit : Vehicle
         this.Init(ts);
     }
 
+    public Trambit(string s) : this(new TrambitString(s))
+    {
+    }
+
     private void Init(TrambitString ts)
     {
         var trambitString = ts.GetStringValue();

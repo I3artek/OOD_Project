@@ -21,6 +21,10 @@ public class Bytebus : Vehicle
         this.Init(bs);
     }
 
+    public Bytebus(string s) : this(new BytebusString(s))
+    {
+    }
+
     private void Init(BytebusString bs)
     {
         var bytebusString = bs.GetStringValue();
