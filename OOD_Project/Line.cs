@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace OOD_Project;
@@ -24,6 +26,11 @@ public class Line
     public Line(LineString ls)
     {
         this.Init(ls);
+    }
+
+    public Line(LineHashMap lhm)
+    {
+        this.Init(lhm);
     }
 
     public Line(string s) : this(new LineString(s))
@@ -58,6 +65,11 @@ public class Line
         {
             this.vehicle_ids.Add(int.Parse(vehicleId));
         }
+    }
+
+    private void Init(LineHashMap lhm)
+    {
+        //this.numberHex = 
     }
 
     private void InitRefs()
@@ -172,5 +184,34 @@ public class LineString
     public override string ToString()
     {
         return new Line(this).ToString();
+    }
+}
+
+public class LineHashMap : HashMap
+{
+    public Dictionary<int, string> hashMap;
+    
+    public int numberHex { get; private set; }
+    public int numberDec { get; private set; }
+    public int commonName { get; private set; }
+    public List<int> stop_ids { get; private set; }
+    public List<int> vehicle_ids { get; private set; }
+
+    public LineHashMap(Line l)
+    {
+        this.hashMap = new Dictionary<int, string>();
+        AddToHashMap(l.numberHex);
+        AddToHashMap(l.numberDec);
+        AddToHashMap(l.commonName);
+        foreach (var lStopId in l.stop_ids)
+        {
+            AddToHashMap(lStopId);
+        }
+
+        foreach (var lVehicleId in l.vehicle_ids)
+        {
+            AddToHashMap(lVehicleId);
+        }
+        InitApplicableFields(this);
     }
 }

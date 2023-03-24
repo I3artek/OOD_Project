@@ -1,0 +1,23 @@
+The following instruction should be executed using the data saved in the
+base representation and the given second representation. Everything should
+be done by one and the same function - creating two similar versions of
+code that do the same thing on different representations is not allowed.
+
+
+1. Print all books, magazines, and games (titles, authors, and publication
+year) in which at least one author was born after 1970.
+
+2. Print all movies and TV series episodes (titles, genres, authors,
+and publication year) in which at least one author was born after 1970.
+
+3. Print the lines (number and name) on which vehicles driven by drivers
+with at least 10 years of experience are operated.
+
+4. Print the courses attended by at least one student with two names
+and a teacher with two names (name, code, duration, student, and teacher).
+
+5. Print games whose average rating is >=10 (name, genre, average rating,
+reviews).
+
+6. Print the cages in which the average age of animals is less than 3
+(cage name, list of animals).
