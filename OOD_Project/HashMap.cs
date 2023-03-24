@@ -1,20 +1,31 @@
-using System.Dynamic;
 using System.Security.Cryptography;
 using System.Text;
 namespace OOD_Project;
 
 public class HashMap
 {
-    private Dictionary<int, string> _map;
+    private readonly Dictionary<int, string> _map = new();
 
-    public void Add(string s)
+    /// <summary>
+    /// Add string s to the hashmap
+    /// </summary>
+    /// <param name="s">string</param>
+    /// <returns> Hash value </returns>
+    public int Add(string s)
     {
-        this._map.Add(GetHash(s), s);
+        var hashed = GetHash(s);
+        this._map.Add(hashed, s);
+        return hashed;
     }
     
-    public void Add(int s)
-    {
-        Add(Convert.ToString(s));
+    /// <summary>
+    /// Converts s to string and adds it to the hashmap
+    /// </summary>
+    /// <param name="s">int</param>
+    /// <returns> Hash value </returns>
+    public int Add(int s)
+    { 
+        return Add(Convert.ToString(s));
     }
 
     public string this[int key] => _map[key];

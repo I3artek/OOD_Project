@@ -8,7 +8,8 @@ namespace OOD_Project
         {
             var BytezariaStrings = new CityStrings();
             var Bytezaria = new City(BytezariaStrings);
-            var xdd = new LineHashMap(Bytezaria.lines[0]);
+            var x = new LineHashMap(Bytezaria.lines[0]);
+            Console.WriteLine(x.commonName);
         }
     }
 }

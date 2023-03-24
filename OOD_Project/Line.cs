@@ -23,11 +23,6 @@ public class Line
         this.InitRefs();
     }
 
-    public Line(ILine l)
-    {
-        
-    }
-    
     public Line(LineString ls)
     {
         this.Init(ls);
@@ -194,23 +189,30 @@ public class LineString : ILine
 
 public class LineHashMap : ILine
 {
-    public Dictionary<int, string> hashMap;
+    private static HashMap _hashMap = new();
     
     public int numberHex { get; private set; }
     public int numberDec { get; private set; }
     public int commonName { get; private set; }
-    public List<int> stop_ids { get; private set; }
-    public List<int> vehicle_ids { get; private set; }
+    public List<int> stop_ids { get; private set; } = new();
+    public List<int> vehicle_ids { get; private set; } = new();
 
     public LineHashMap(Line l)
     {
+        this.numberHex = _hashMap.Add(l.numberHex);
+        this.numberDec = _hashMap.Add(l.numberDec);
+        this.commonName = _hashMap.Add(l.commonName);
+        foreach (var lStopId in l.stop_ids)
+        {
+            this.stop_ids.Add(_hashMap.Add(lStopId));
+        }
+        foreach (var lVehicleId in l.vehicle_ids)
+        {
+            this.vehicle_ids.Add(_hashMap.Add(lVehicleId));
+        }
     }
 }
 
 public interface ILine
 {
-    public string ToString()
-    {
-        return new Line(this).ToString();
-    }
 }
