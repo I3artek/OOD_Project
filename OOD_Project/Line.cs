@@ -22,6 +22,11 @@ public class Line
         this.Init(ls);
         this.InitRefs();
     }
+
+    public Line(ILine l)
+    {
+        
+    }
     
     public Line(LineString ls)
     {
@@ -155,7 +160,7 @@ public class Line
     }
 }
 
-public class LineString
+public class LineString : ILine
 {
     private string value;
 
@@ -187,7 +192,7 @@ public class LineString
     }
 }
 
-public class LineHashMap : HashMap
+public class LineHashMap : ILine
 {
     public Dictionary<int, string> hashMap;
     
@@ -199,19 +204,13 @@ public class LineHashMap : HashMap
 
     public LineHashMap(Line l)
     {
-        this.hashMap = new Dictionary<int, string>();
-        AddToHashMap(l.numberHex);
-        AddToHashMap(l.numberDec);
-        AddToHashMap(l.commonName);
-        foreach (var lStopId in l.stop_ids)
-        {
-            AddToHashMap(lStopId);
-        }
+    }
+}
 
-        foreach (var lVehicleId in l.vehicle_ids)
-        {
-            AddToHashMap(lVehicleId);
-        }
-        InitApplicableFields(this);
+public interface ILine
+{
+    public string ToString()
+    {
+        return new Line(this).ToString();
     }
 }

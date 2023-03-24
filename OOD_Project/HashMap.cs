@@ -1,26 +1,35 @@
+using System.Dynamic;
+using System.Security.Cryptography;
+using System.Text;
 namespace OOD_Project;
 
 public class HashMap
 {
-    public Dictionary<int, string> hashMap;
+    private Dictionary<int, string> _map;
 
-    protected void AddToHashMap(string s)
+    public void Add(string s)
     {
-        this.hashMap.Add(HashThings.StringToInt(s), s);
+        this._map.Add(GetHash(s), s);
     }
     
-    protected void AddToHashMap(int s)
+    public void Add(int s)
     {
-        this.hashMap.Add(HashThings.IntToInt(s), 
-            Convert.ToString(s));
+        Add(Convert.ToString(s));
     }
 
-    protected void InitApplicableFields(object o)
+    public string this[int key] => _map[key];
+    
+    public string Get(int key) => this[key];
+
+    public static int GetHash(string s)
     {
-        var xd  = o.GetType().GetProperties();
-        foreach (var x in xd)
-        {
-            Console.WriteLine(x.Name);
-        }
+        return BitConverter.ToInt32(
+            SHA256.HashData(
+                Encoding.ASCII.GetBytes(s)));
+    }
+    
+    public static int GetHash(int s)
+    {
+        return GetHash(Convert.ToString(s));
     }
 }
