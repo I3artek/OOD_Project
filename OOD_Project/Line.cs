@@ -10,10 +10,10 @@ public class Line
     public int numberDec { get; private set; }
     //numberDec is what is referred to as line_id in other places
     public string commonName { get; private set; }
-    public List<int> stop_ids { get; private set; }
-    public List<Stop> stops { get; private set; }
-    public List<int> vehicle_ids { get; private set; }
-    public List<Vehicle> vehicles { get; private set; }
+    public List<int> stop_ids { get; private set; } = new();
+    public List<Stop> stops { get; private set; } = new();
+    public List<int> vehicle_ids { get; private set; } = new();
+    public List<Vehicle> vehicles { get; private set; } = new();
     public City _city { get; private set; }
 
     public Line(LineString ls, City city)
@@ -50,15 +50,13 @@ public class Line
         this.commonName = Regex.Match(lineString, "`[^`]+")
             .Value[1..];
         
-        this.stop_ids = new List<int>();
         var stop_ids = Regex.Match(lineString, "@[^!]+")
             .Value[1..].Split(",").ToList();
         foreach (var stopId in stop_ids)
         {
             this.stop_ids.Add(int.Parse(stopId));
         }
-
-        this.vehicle_ids = new List<int>();
+        
         var vehicle_ids = Regex.Match(lineString, "!.+")
             .Value[1..].Split(",").ToList();
         foreach (var vehicleId in vehicle_ids)
@@ -69,14 +67,22 @@ public class Line
 
     private void Init(LineHashMap lhm)
     {
-        //this.numberHex = 
+        this.numberHex = lhm.numberHex;
+        this.numberDec = lhm.numberDec;
+        this.commonName = lhm.commonName;
+        for (var i = 0; i < lhm.stop_ids.Count; i++)
+        {
+            this.stop_ids.Add(lhm.stop_ids[i]);
+        }
+
+        for (var i = 0; i < lhm.vehicle_ids.Count; i++)
+        {
+            this.vehicle_ids.Add(lhm.vehicle_ids[i]);
+        }
     }
 
     private void InitRefs()
     {
-        this.stops = new List<Stop>();
-        this.vehicles = new List<Vehicle>();
-        
         this.UpdateRefs();
     }
 
@@ -187,21 +193,23 @@ public class LineString : ILine
     }
 }
 
-public class LineHashMap : ILine
+public class LineHashMap : HashMapRepresentation, ILine
 {
-    private static HashMap _hashMap = new();
-    
-    public int numberHex { get; private set; }
-    public int numberDec { get; private set; }
-    public int commonName { get; private set; }
-    public List<int> stop_ids { get; private set; } = new();
-    public List<int> vehicle_ids { get; private set; } = new();
+    private static readonly HashMap _hashMap = new();
+    private readonly int _numberHex;
+    public string numberHex => _hashMap[_numberHex];
+    private readonly int _numberDec;
+    public int numberDec => Convert.ToInt32(_hashMap[_numberDec]);
+    private readonly int _commonName;
+    public string commonName => _hashMap[_commonName];
+    public readonly HashedList stop_ids = new(_hashMap);
+    public readonly HashedList vehicle_ids = new(_hashMap);
 
     public LineHashMap(Line l)
     {
-        this.numberHex = _hashMap.Add(l.numberHex);
-        this.numberDec = _hashMap.Add(l.numberDec);
-        this.commonName = _hashMap.Add(l.commonName);
+        this._numberHex = _hashMap.Add(l.numberHex);
+        this._numberDec = _hashMap.Add(l.numberDec);
+        this._commonName = _hashMap.Add(l.commonName);
         foreach (var lStopId in l.stop_ids)
         {
             this.stop_ids.Add(_hashMap.Add(lStopId));
@@ -210,6 +218,11 @@ public class LineHashMap : ILine
         {
             this.vehicle_ids.Add(_hashMap.Add(lVehicleId));
         }
+    }
+
+    public override string ToString()
+    {
+        return new Line(this).ToString();
     }
 }
 
