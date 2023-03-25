@@ -50,17 +50,6 @@ public class HashMap
     }
 }
 
-public abstract class HashMapRepresentation
-{
-    private static readonly HashMap _hashMap;
-}
-
-/// <summary>
-/// This class does not implement IEnumerable in proper way.
-/// The only acceptable way of iterating through its elements
-/// is by using standard for loop and accessing each element
-/// using the indexer HashedList[i].
-/// </summary>
 public class HashedList : List<int>
 {
     private readonly HashMap _HashMap;
@@ -70,4 +59,13 @@ public class HashedList : List<int>
         this._HashMap = hm;
     }
     public new int this[int index] => Convert.ToInt32(_HashMap[base[index]]);
+
+    public new IEnumerator GetEnumerator()
+    {
+        using var ie = base.GetEnumerator();
+        while (ie.MoveNext())
+        {
+            yield return Convert.ToInt32(_HashMap[ie.Current]);
+        }
+    }
 }

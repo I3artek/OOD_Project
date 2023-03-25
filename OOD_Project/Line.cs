@@ -70,14 +70,21 @@ public class Line
         this.numberHex = lhm.numberHex;
         this.numberDec = lhm.numberDec;
         this.commonName = lhm.commonName;
-        for (var i = 0; i < lhm.stop_ids.Count; i++)
+        // for (var i = 0; i < lhm.stop_ids.Count; i++)
+        // {
+        //     this.stop_ids.Add(lhm.stop_ids[i]);
+        // }
+        foreach (int lhmStopId in lhm.stop_ids)
         {
-            this.stop_ids.Add(lhm.stop_ids[i]);
+            this.stop_ids.Add(lhmStopId);
         }
-
-        for (var i = 0; i < lhm.vehicle_ids.Count; i++)
+        // for (var i = 0; i < lhm.vehicle_ids.Count; i++)
+        // {
+        //     this.vehicle_ids.Add(lhm.vehicle_ids[i]);
+        // }
+        foreach (int lhmVehicleId in lhm.vehicle_ids)
         {
-            this.vehicle_ids.Add(lhm.vehicle_ids[i]);
+            this.vehicle_ids.Add(lhmVehicleId);
         }
     }
 
@@ -193,7 +200,7 @@ public class LineString : ILine
     }
 }
 
-public class LineHashMap : HashMapRepresentation, ILine
+public class LineHashMap : ILine
 {
     private static readonly HashMap _hashMap = new();
     private readonly int _numberHex;
