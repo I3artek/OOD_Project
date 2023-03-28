@@ -222,20 +222,17 @@ public class LineString : ILine
 public class LineHashMap : ILine
 {
     private static readonly HashMap _hashMap = new();
-    private readonly int _numberHex;
-    private string numberHex => _hashMap[_numberHex];
-    private readonly int _numberDec;
-    private int numberDec => Convert.ToInt32(_hashMap[_numberDec]);
-    private readonly int _commonName;
-    private string commonName => _hashMap[_commonName];
+    private readonly int numberHex;
+    private readonly int numberDec;
+    private readonly int commonName;
     private readonly HashedList stop_ids = new(_hashMap);
     private readonly HashedList vehicle_ids = new(_hashMap);
 
-    public LineHashMap(Line l)
+    public LineHashMap(ILine l)
     {
-        this._numberHex = _hashMap.Add(l.GetNumberHex());
-        this._numberDec = _hashMap.Add(l.GetNumberDec());
-        this._commonName = _hashMap.Add(l.GetCommonName());
+        this.numberHex = _hashMap.Add(l.GetNumberHex());
+        this.numberDec = _hashMap.Add(l.GetNumberDec());
+        this.commonName = _hashMap.Add(l.GetCommonName());
         for (var i = 0; i < l.GetStopIdsCount(); i++)
         {
             this.stop_ids.Add(_hashMap.Add(l.GetStopId(i)));
@@ -250,10 +247,10 @@ public class LineHashMap : ILine
     {
         return new Line(this).ToString();
     }
-    
-    public string GetNumberHex() => this.numberHex;
-    public int GetNumberDec() => this.numberDec;
-    public string GetCommonName() => this.commonName;
+
+    public string GetNumberHex() => _hashMap[numberHex];
+    public int GetNumberDec() => Convert.ToInt32(_hashMap[numberDec]);
+    public string GetCommonName() => _hashMap[commonName];
     public int GetStopId(int index) => this.stop_ids[index];
     public int GetVehicleId(int index) => this.vehicle_ids[index];
     public int GetStopIdsCount() => this.stop_ids.Count;
