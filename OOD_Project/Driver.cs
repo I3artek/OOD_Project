@@ -8,6 +8,7 @@ public interface IDriver
     public string GetName();
     public string GetSurname();
     public int GetSeniority();
+    public int GetVehicleIdsCount();
 }
 
 public class Driver : IDriver
@@ -16,7 +17,7 @@ public class Driver : IDriver
     private List<Vehicle> vehicles { get; set; }
     private string name { get; set; }
     private string surname { get; set; }
-    private int seniority { get; set; }  
+    private int seniority { get; set; }
     public City _city { get; private set; }
 
     public Driver(DriverString ds, City city)
@@ -33,6 +34,18 @@ public class Driver : IDriver
 
     public Driver(string s) : this(new DriverString(s))
     {
+    }
+    
+    public Driver(IDriver d)
+    {
+        for (var i = 0; i < d.GetVehicleIdsCount(); i++)
+        {
+            this.vehicle_ids.Add(d.GetVehicleId(i));
+        }
+
+        this.name = d.GetName();
+        this.surname = d.GetSurname();
+        this.seniority = d.GetSeniority();
     }
 
     private void Init(DriverString ds)
@@ -116,6 +129,7 @@ public class Driver : IDriver
     public string GetName() => this.name;
     public string GetSurname() => this.surname;
     public int GetSeniority() => this.seniority;
+    public int GetVehicleIdsCount() => this.vehicle_ids.Count;
 }
 
 public class DriverString : IDriver
@@ -153,4 +167,32 @@ public class DriverString : IDriver
     public string GetName() => new Driver(this).GetName();
     public string GetSurname() => new Driver(this).GetSurname();
     public int GetSeniority() => new Driver(this).GetSeniority();
+    public int GetVehicleIdsCount() => new Driver(this).GetVehicleIdsCount();
+}
+
+public class DriverHashMap : IDriver
+{
+    private static readonly HashMap _hashMap = new();
+    private readonly HashedList vehicle_ids = new(_hashMap);
+    private readonly int name;
+    private readonly int surname;
+    private readonly int seniority;
+
+    public DriverHashMap(IDriver d)
+    {
+        for (var i = 0; i < d.GetVehicleIdsCount(); i++)
+        {
+            this.vehicle_ids.Add(_hashMap.Add(d.GetVehicleId(i)));
+        }
+
+        this.name = _hashMap.Add(d.GetName());
+        this.surname = _hashMap.Add(d.GetSurname());
+        this.seniority = _hashMap.Add(d.GetSeniority());
+    }
+
+    public int GetVehicleId(int index) => vehicle_ids[index];
+    public string GetName() => _hashMap[this.name];
+    public string GetSurname() => _hashMap[this.surname];
+    public int GetSeniority() => Convert.ToInt32(_hashMap[this.seniority]);
+    public int GetVehicleIdsCount() => this.vehicle_ids.Count;
 }

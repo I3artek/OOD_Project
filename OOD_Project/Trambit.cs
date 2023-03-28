@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace OOD_Project;
 
-public interface ITrambit
+public interface ITrambit : IVehicle
 {
     public int GetCarsNumber();
     public int GetLineId();
@@ -15,20 +15,26 @@ public class Trambit : Vehicle, ITrambit
     private Line line { get; set; }
     public City _city { get; private set; }
 
-    public Trambit(TrambitString ts, City city)
+    public Trambit(TrambitString ts, City city) : base(ts)
     {
         this._city = city;
         this.Init(ts);
         this.InitRefs();
     }
     
-    public Trambit(TrambitString ts)
+    public Trambit(TrambitString ts) : base(ts)
     {
         this.Init(ts);
     }
 
     public Trambit(string s) : this(new TrambitString(s))
     {
+    }
+    
+    public Trambit(ITrambit t) : base(t)
+    {
+        this.carsNumber = t.GetCarsNumber();
+        this.line_id = t.GetLineId();
     }
 
     private void Init(TrambitString ts)
@@ -128,4 +134,19 @@ public class TrambitString : VehicleString, ITrambit
     public override int GetId() => new Trambit(this).GetId();
     public int GetCarsNumber() => new Trambit(this).GetCarsNumber();
     public int GetLineId() => new Trambit(this).GetLineId();
+}
+
+public class TrambitHashMap : VehicleHashMap, ITrambit
+{
+    private readonly int carsNumber;
+    private readonly int lineId;
+    
+    public TrambitHashMap(ITrambit t) : base(t)
+    {
+        this.carsNumber = _hashMap.Add(t.GetCarsNumber());
+        this.lineId = _hashMap.Add(t.GetLineId());
+    }
+    
+    public int GetCarsNumber() => Convert.ToInt32(_hashMap[this.carsNumber]);
+    public int GetLineId() => Convert.ToInt32(_hashMap[this.lineId]);
 }

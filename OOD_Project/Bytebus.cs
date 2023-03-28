@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace OOD_Project;
 
-public interface IBytebus
+public interface IBytebus : IVehicle
 {
     public int GetLineId(int index);
     public engineClassEnum GetEngineClass();
@@ -16,20 +16,30 @@ public class Bytebus : Vehicle, IBytebus
     private engineClassEnum engineClass { get; set; }
     public City _city { get; private set; }
 
-    public Bytebus(BytebusString bs, City city)
+    public Bytebus(BytebusString bs, City city) : base(bs)
     {
         this._city = city;
         this.Init(bs);
         this.InitRefs();
     }
     
-    public Bytebus(BytebusString bs)
+    public Bytebus(BytebusString bs) : base(bs)
     {
         this.Init(bs);
     }
 
     public Bytebus(string s) : this(new BytebusString(s))
     {
+    }
+    
+    public Bytebus(IBytebus b) : base(b)
+    {
+        for (var i = 0; i < b.GetLineIdsCount(); i++)
+        {
+            this.line_ids.Add(b.GetLineId(i));
+        }
+
+        this.engineClass = b.GetEngineClass();
     }
 
     private void Init(BytebusString bs)
@@ -160,4 +170,25 @@ public class BytebusString : VehicleString, IBytebus
     public engineClassEnum GetEngineClass() => new Bytebus(this).GetEngineClass();
     public int GetLineIdsCount() => new Bytebus(this).GetLineIdsCount();
     public override int GetId() => new Bytebus(this).GetId();
+}
+
+public class BytebusHashMap : VehicleHashMap, IBytebus
+{
+    private readonly HashedList line_ids = new(_hashMap);
+    private readonly int engineClass;
+
+    public BytebusHashMap(IBytebus b) : base(b)
+    {
+        for (var i = 0; i < b.GetLineIdsCount(); i++)
+        {
+            this.line_ids.Add(_hashMap.Add(b.GetLineId(i)));
+        }
+
+        this.engineClass = _hashMap.Add(b.GetEngineClass().ToString());
+    }
+    
+    public int GetLineId(int index) => this.line_ids[index];
+    public engineClassEnum GetEngineClass() => 
+        (engineClassEnum)Enum.Parse(typeof(engineClassEnum), _hashMap[this.engineClass]);
+    public int GetLineIdsCount() => this.line_ids.Count;
 }

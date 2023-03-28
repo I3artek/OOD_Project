@@ -35,6 +35,18 @@ public class Stop : IStop
     public Stop(string s) : this(new StopString(s))
     {
     }
+    
+    public Stop(IStop s)
+    {
+        this.id = s.GetId();
+        for (var i = 0; i < s.GetLineIdsCount(); i++)
+        {
+            this.line_ids.Add(s.GetLineId(i));
+        }
+
+        this.name = s.GetName();
+        this.type = s.GetType();
+    }
 
     private void Init(StopString ss)
     {
@@ -169,4 +181,31 @@ public class StopString : IStop
     public string GetName() => new Stop(this).GetName();
     public typeEnum GetType() => new Stop(this).GetType();
     public int GetLineIdsCount() => new Stop(this).GetLineIdsCount();
+}
+
+public class StopHashMap : IStop
+{
+    private static readonly HashMap _hashMap = new();
+    private readonly int id;
+    private readonly HashedList line_ids = new(_hashMap);
+    private readonly int name;
+    private readonly int type;
+
+    public StopHashMap(IStop s)
+    {
+        this.id = _hashMap.Add(s.GetId());
+        for (var i = 0; i < s.GetLineIdsCount(); i++)
+        {
+            this.line_ids.Add(_hashMap.Add(s.GetLineId(i)));
+        }
+
+        this.name = _hashMap.Add(s.GetName());
+        this.type = _hashMap.Add(s.GetType().ToString());
+    }
+    
+    public int GetId() => Convert.ToInt32(_hashMap[this.id]);
+    public int GetLineId(int index) => this.line_ids[index];
+    public string GetName() => _hashMap[this.name];
+    public typeEnum GetType() => (typeEnum)Enum.Parse(typeof(typeEnum), _hashMap[this.type]);
+    public int GetLineIdsCount() => this.line_ids.Count;
 }

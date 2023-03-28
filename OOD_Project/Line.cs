@@ -39,9 +39,19 @@ public class Line : ILine
         this.Init(ls);
     }
 
-    public Line(LineHashMap lhm)
+    public Line(ILine l)
     {
-        this.Init(lhm);
+        this.numberHex = l.GetNumberHex();
+        this.numberDec = l.GetNumberDec();
+        this.commonName = l.GetCommonName();
+        for (var i = 0; i < l.GetStopIdsCount(); i++)
+        {
+            this.stop_ids.Add(l.GetStopId(i));
+        }
+        for (var i = 0; i < l.GetVehicleIdsCount(); i++)
+        {
+            this.vehicle_ids.Add(l.GetVehicleId(i));
+        }
     }
 
     public Line(string s) : this(new LineString(s))
@@ -73,21 +83,6 @@ public class Line : ILine
         foreach (var vehicleId in vehicle_ids)
         {
             this.vehicle_ids.Add(int.Parse(vehicleId));
-        }
-    }
-
-    private void Init(ILine l)
-    {
-        this.numberHex = l.GetNumberHex();
-        this.numberDec = l.GetNumberDec();
-        this.commonName = l.GetCommonName();
-        for (var i = 0; i < l.GetStopIdsCount(); i++)
-        {
-            this.stop_ids.Add(l.GetStopId(i));
-        }
-        for (var i = 0; i < l.GetVehicleIdsCount(); i++)
-        {
-            this.vehicle_ids.Add(l.GetVehicleId(i));
         }
     }
 
