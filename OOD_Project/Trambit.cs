@@ -2,11 +2,17 @@ using System.Text.RegularExpressions;
 
 namespace OOD_Project;
 
-public class Trambit : Vehicle
+public interface ITrambit
 {
-    public int carsNumber { get; private set; }
-    public int line_id { get; private set; }
-    public Line line { get; private set; }
+    public int GetCarsNumber();
+    public int GetLineId();
+}
+
+public class Trambit : Vehicle, ITrambit
+{
+    private int carsNumber { get; set; }
+    private int line_id { get; set; }
+    private Line line { get; set; }
     public City _city { get; private set; }
 
     public Trambit(TrambitString ts, City city)
@@ -53,7 +59,7 @@ public class Trambit : Vehicle
     {
         foreach (var cityLine in _city.lines)
         {
-            if (cityLine.numberDec == line_id)
+            if (cityLine.GetNumberDec() == line_id)
             {
                 this.line = cityLine;
             }
@@ -83,9 +89,12 @@ public class Trambit : Vehicle
     {
         return new TrambitString(this.ToRep1String());
     }
+
+    public int GetCarsNumber() => this.carsNumber;
+    public int GetLineId() => this.line_id;
 }
 
-public class TrambitString : VehicleString
+public class TrambitString : VehicleString, ITrambit
 {
     private string value;
 
@@ -115,4 +124,8 @@ public class TrambitString : VehicleString
     {
         return new Trambit(this).ToString();
     }
+
+    public override int GetId() => new Trambit(this).GetId();
+    public int GetCarsNumber() => new Trambit(this).GetCarsNumber();
+    public int GetLineId() => new Trambit(this).GetLineId();
 }

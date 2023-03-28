@@ -1,15 +1,21 @@
 namespace OOD_Project;
 
-public abstract class Vehicle
+public interface IVehicle
 {
-    public int id { get; protected set; }
+    public int GetId();
+}
+
+public abstract class Vehicle : IVehicle
+{
+    protected int id { get; set; }
 
     public abstract string ToRep1String();
     public abstract VehicleString ToRep1();
     public abstract void UpdateRefs();
+    public int GetId() => this.id;
 }
 
-public abstract class VehicleString
+public abstract class VehicleString : IVehicle
 {
-    
+    public abstract int GetId();
 }

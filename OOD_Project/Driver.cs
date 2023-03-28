@@ -2,13 +2,21 @@ using System.Text.RegularExpressions;
 
 namespace OOD_Project;
 
-public class Driver
+public interface IDriver
 {
-    public List<int> vehicle_ids { get; private set; }
-    public List<Vehicle> vehicles { get; private set; }
-    public string name { get; private set; }
-    public string surname { get; private set; }
-    public int seniority { get; private set; }  
+    public int GetVehicleId(int index);
+    public string GetName();
+    public string GetSurname();
+    public int GetSeniority();
+}
+
+public class Driver : IDriver
+{
+    private List<int> vehicle_ids { get; set; }
+    private List<Vehicle> vehicles { get; set; }
+    private string name { get; set; }
+    private string surname { get; set; }
+    private int seniority { get; set; }  
     public City _city { get; private set; }
 
     public Driver(DriverString ds, City city)
@@ -60,7 +68,7 @@ public class Driver
         {
             foreach (var cityVehicle in _city.vehicles)
             {
-                if (cityVehicle.id == vehicleId)
+                if (cityVehicle.GetId() == vehicleId)
                 {
                     this.vehicles.Add(cityVehicle);
                 }
@@ -103,9 +111,14 @@ public class Driver
     {
         return new DriverString(this.ToRep1String());
     }
+
+    public int GetVehicleId(int index) => this.vehicle_ids[index];
+    public string GetName() => this.name;
+    public string GetSurname() => this.surname;
+    public int GetSeniority() => this.seniority;
 }
 
-public class DriverString
+public class DriverString : IDriver
 {
     private string value;
 
@@ -135,4 +148,9 @@ public class DriverString
     {
         return new Driver(this).ToString();
     }
+
+    public int GetVehicleId(int index) => new Driver(this).GetVehicleId(index);
+    public string GetName() => new Driver(this).GetName();
+    public string GetSurname() => new Driver(this).GetSurname();
+    public int GetSeniority() => new Driver(this).GetSeniority();
 }

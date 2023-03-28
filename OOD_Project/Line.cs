@@ -25,7 +25,7 @@ public class Line : ILine
     private List<Stop> stops { get; set; } = new();
     private List<int> vehicle_ids { get; set; } = new();
     private List<Vehicle> vehicles { get; set; } = new();
-    private City _city { get; set; }
+    public City _city { get; set; }
 
     public Line(LineString ls, City city)
     {
@@ -102,7 +102,7 @@ public class Line : ILine
         {
             foreach (var cityStop in _city.stops)
             {
-                if (cityStop.id == stopId)
+                if (cityStop.GetId() == stopId)
                 {
                     this.stops.Add(cityStop);
                 }
@@ -112,7 +112,7 @@ public class Line : ILine
         {
             foreach (var cityVehicle in _city.vehicles)
             {
-                if (cityVehicle.id == vehicleId)
+                if (cityVehicle.GetId() == vehicleId)
                 {
                     this.vehicles.Add(cityVehicle);
                 }

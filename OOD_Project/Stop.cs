@@ -2,13 +2,22 @@ using System.Text.RegularExpressions;
 
 namespace OOD_Project;
 
-public class Stop
+public interface IStop
 {
-    public int id { get; private set; }
-    public List<int> line_ids { get; private set; }
-    public List<Line> lines { get; private set; }
-    public string name { get; private set; }
-    public typeEnum type { get; private set; }
+    public int GetId();
+    public int GetLineId(int index);
+    public string GetName();
+    public typeEnum GetType();
+    public int GetLineIdsCount();
+}
+
+public class Stop : IStop
+{
+    private int id { get; set; }
+    private List<int> line_ids { get; set; }
+    private List<Line> lines { get; set; }
+    private string name { get; set; }
+    private typeEnum type { get; set; }
     public City _city { get; private set; }
 
     public Stop(StopString ss, City city)
@@ -63,7 +72,7 @@ public class Stop
         {
             foreach (var cityLine in _city.lines)
             {
-                if (cityLine.numberDec == lineId)
+                if (cityLine.GetNumberDec() == lineId)
                 {
                     this.lines.Add(cityLine);
                 }
@@ -107,6 +116,12 @@ public class Stop
     {
         return new StopString(this.ToRep1String());
     }
+
+    public int GetId() => this.id;
+    public int GetLineId(int index) => this.line_ids[index];
+    public string GetName() => this.name;
+    public typeEnum GetType() => this.type;
+    public int GetLineIdsCount() => this.line_ids.Count;
 }
 
 public enum typeEnum
@@ -116,7 +131,7 @@ public enum typeEnum
     other
 }
 
-public class StopString
+public class StopString : IStop
 {
     private string value;
 
@@ -148,4 +163,10 @@ public class StopString
     {
         return new Stop(this).ToString();
     }
+
+    public int GetId() => new Stop(this).GetId();
+    public int GetLineId(int index) => new Stop(this).GetLineId(index);
+    public string GetName() => new Stop(this).GetName();
+    public typeEnum GetType() => new Stop(this).GetType();
+    public int GetLineIdsCount() => new Stop(this).GetLineIdsCount();
 }

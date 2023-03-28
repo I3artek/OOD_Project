@@ -2,11 +2,18 @@ using System.Text.RegularExpressions;
 
 namespace OOD_Project;
 
-public class Bytebus : Vehicle
+public interface IBytebus
 {
-    public List<int> line_ids { get; private set; }
-    public List<Line> lines { get; private set; }
-    public engineClassEnum engineClass { get; private set; }
+    public int GetLineId(int index);
+    public engineClassEnum GetEngineClass();
+    public int GetLineIdsCount();
+}
+
+public class Bytebus : Vehicle, IBytebus
+{
+    private List<int> line_ids { get; set; }
+    private List<Line> lines { get; set; }
+    private engineClassEnum engineClass { get; set; }
     public City _city { get; private set; }
 
     public Bytebus(BytebusString bs, City city)
@@ -62,7 +69,7 @@ public class Bytebus : Vehicle
         {
             foreach (var cityLine in _city.lines)
             {
-                if (cityLine.numberDec == lineId)
+                if (cityLine.GetNumberDec() == lineId)
                 {
                     this.lines.Add(cityLine);
                 }
@@ -103,6 +110,10 @@ public class Bytebus : Vehicle
     {
         return new BytebusString(this.ToRep1String());
     }
+
+    public int GetLineId(int index) => this.line_ids[index];
+    public engineClassEnum GetEngineClass() => this.engineClass;
+    public int GetLineIdsCount() => this.line_ids.Count;
 }
 
 public enum engineClassEnum
@@ -112,7 +123,7 @@ public enum engineClassEnum
     gibgaz
 }
 
-public class BytebusString : VehicleString
+public class BytebusString : VehicleString, IBytebus
 {
     private string value;
 
@@ -144,4 +155,9 @@ public class BytebusString : VehicleString
     {
         return new Bytebus(this).ToString();
     }
+
+    public int GetLineId(int index) => new Bytebus(this).GetLineId(index);
+    public engineClassEnum GetEngineClass() => new Bytebus(this).GetEngineClass();
+    public int GetLineIdsCount() => new Bytebus(this).GetLineIdsCount();
+    public override int GetId() => new Bytebus(this).GetId();
 }
