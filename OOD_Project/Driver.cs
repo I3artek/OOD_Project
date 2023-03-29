@@ -13,7 +13,7 @@ public interface IDriver
 
 public class Driver : IDriver
 {
-    private List<int> vehicle_ids { get; set; }
+    private List<int> vehicle_ids { get; set; } = new();
     private List<Vehicle> vehicles { get; set; }
     private string name { get; set; }
     private string surname { get; set; }
@@ -79,13 +79,14 @@ public class Driver : IDriver
     {
         foreach (var vehicleId in vehicle_ids)
         {
-            foreach (var cityVehicle in _city.vehicles)
-            {
-                if (cityVehicle.GetId() == vehicleId)
-                {
-                    this.vehicles.Add(cityVehicle);
-                }
-            }
+            this.vehicles.Add(_city.GetVehicle(vehicleId) as Vehicle);
+            // foreach (var cityVehicle in _city.vehicles)
+            // {
+            //     if (cityVehicle.GetId() == vehicleId)
+            //     {
+            //         this.vehicles.Add(cityVehicle);
+            //     }
+            // }
         }
     }
     
@@ -188,6 +189,11 @@ public class DriverHashMap : IDriver
         this.name = _hashMap.Add(d.GetName());
         this.surname = _hashMap.Add(d.GetSurname());
         this.seniority = _hashMap.Add(d.GetSeniority());
+    }
+
+    public override string ToString()
+    {
+        return new Driver(this).ToString();
     }
 
     public int GetVehicleId(int index) => vehicle_ids[index];

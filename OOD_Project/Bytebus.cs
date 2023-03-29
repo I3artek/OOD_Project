@@ -11,7 +11,7 @@ public interface IBytebus : IVehicle
 
 public class Bytebus : Vehicle, IBytebus
 {
-    private List<int> line_ids { get; set; }
+    private List<int> line_ids { get; set; } = new();
     private List<Line> lines { get; set; }
     private engineClassEnum engineClass { get; set; }
     public City _city { get; private set; }
@@ -77,13 +77,14 @@ public class Bytebus : Vehicle, IBytebus
     {
         foreach (var lineId in line_ids)
         {
-            foreach (var cityLine in _city.lines)
-            {
-                if (cityLine.GetNumberDec() == lineId)
-                {
-                    this.lines.Add(cityLine);
-                }
-            }
+            this.lines.Add(_city.GetLine(lineId) as Line);
+            // foreach (var cityLine in _city.lines)
+            // {
+            //     if (cityLine.GetNumberDec() == lineId)
+            //     {
+            //         this.lines.Add(cityLine);
+            //     }
+            // }
         }
     }
     
@@ -186,7 +187,12 @@ public class BytebusHashMap : VehicleHashMap, IBytebus
 
         this.engineClass = _hashMap.Add(b.GetEngineClass().ToString());
     }
-    
+
+    public override string ToString()
+    {
+        return new Bytebus(this).ToString();
+    }
+
     public int GetLineId(int index) => this.line_ids[index];
     public engineClassEnum GetEngineClass() => 
         (engineClassEnum)Enum.Parse(typeof(engineClassEnum), _hashMap[this.engineClass]);

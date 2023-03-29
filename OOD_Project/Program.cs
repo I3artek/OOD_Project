@@ -6,12 +6,18 @@ namespace OOD_Project
     {
         private static void Main(string[] args)
         {
-            var BytezariaStrings = new CityStrings();
-            var Bytezaria = new City(BytezariaStrings);
-            var s = Bytezaria.lines[0];
-            var x = new LineHashMap(s);
-            var d = new Line(x);
-            Console.WriteLine(x);
+            var StringBytezaria = new StringCity();
+            var BaseBytezaria = new BaseCity(StringBytezaria);
+            var HashMapBytezaria = new HashMapCity(BaseBytezaria);
+
+            var Cities = new List<City>
+            {
+                BaseBytezaria,
+                StringBytezaria,
+                HashMapBytezaria
+            };
+            
+            TaskTesting.PerformOnAll(Cities, TaskTesting.Task2, "Task 2", true);
         }
     }
 }

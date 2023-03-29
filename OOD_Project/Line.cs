@@ -95,23 +95,31 @@ public class Line : ILine
     {
         foreach (var stopId in stop_ids)
         {
-            foreach (var cityStop in _city.stops)
+            if (_city.GetStop(stopId) is Stop)
             {
-                if (cityStop.GetId() == stopId)
-                {
-                    this.stops.Add(cityStop);
-                }
+                this.stops.Add(_city.GetStop(stopId) as Stop);
             }
+            // foreach (var cityStop in _city.stops)
+            // {
+            //     if (cityStop.GetId() == stopId)
+            //     {
+            //         this.stops.Add(cityStop);
+            //     }
+            // }
         }
         foreach (var vehicleId in vehicle_ids)
         {
-            foreach (var cityVehicle in _city.vehicles)
+            if (_city.GetVehicle(vehicleId) is Vehicle)
             {
-                if (cityVehicle.GetId() == vehicleId)
-                {
-                    this.vehicles.Add(cityVehicle);
-                }
+                this.vehicles.Add(_city.GetVehicle(vehicleId) as Vehicle);
             }
+            // foreach (var cityVehicle in _city.vehicles)
+            // {
+            //     if (cityVehicle.GetId() == vehicleId)
+            //     {
+            //         this.vehicles.Add(cityVehicle);
+            //     }
+            // }
         }
     }
 

@@ -63,13 +63,14 @@ public class Trambit : Vehicle, ITrambit
 
     public override void UpdateRefs()
     {
-        foreach (var cityLine in _city.lines)
-        {
-            if (cityLine.GetNumberDec() == line_id)
-            {
-                this.line = cityLine;
-            }
-        }
+        this.line = _city.GetLine(line_id) as Line;
+        // foreach (var cityLine in _city.lines)
+        // {
+        //     if (cityLine.GetNumberDec() == line_id)
+        //     {
+        //         this.line = cityLine;
+        //     }
+        // }
     }
     
     public override string ToString()
@@ -146,7 +147,12 @@ public class TrambitHashMap : VehicleHashMap, ITrambit
         this.carsNumber = _hashMap.Add(t.GetCarsNumber());
         this.lineId = _hashMap.Add(t.GetLineId());
     }
-    
+
+    public override string ToString()
+    {
+        return new Trambit(this).ToString();
+    }
+
     public int GetCarsNumber() => Convert.ToInt32(_hashMap[this.carsNumber]);
     public int GetLineId() => Convert.ToInt32(_hashMap[this.lineId]);
 }

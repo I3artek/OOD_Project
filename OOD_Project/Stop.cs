@@ -15,7 +15,7 @@ public class Stop : IStop
 {
     private int id { get; set; }
     private List<int> line_ids { get; set; }
-    private List<Line> lines { get; set; }
+    private List<Line> lines { get; set; } = new();
     private string name { get; set; }
     private typeEnum type { get; set; }
     public City _city { get; private set; }
@@ -82,13 +82,14 @@ public class Stop : IStop
     {
         foreach (var lineId in line_ids)
         {
-            foreach (var cityLine in _city.lines)
-            {
-                if (cityLine.GetNumberDec() == lineId)
-                {
-                    this.lines.Add(cityLine);
-                }
-            }
+            this.lines.Add(_city.GetLine(lineId) as Line);
+            // foreach (var cityLine in _city.lines)
+            // {
+            //     if (cityLine.GetNumberDec() == lineId)
+            //     {
+            //         this.lines.Add(cityLine);
+            //     }
+            // }
         }
     }
     
@@ -202,7 +203,12 @@ public class StopHashMap : IStop
         this.name = _hashMap.Add(s.GetName());
         this.type = _hashMap.Add(s.GetType().ToString());
     }
-    
+
+    public override string ToString()
+    {
+        return new Stop(this).ToString();
+    }
+
     public int GetId() => Convert.ToInt32(_hashMap[this.id]);
     public int GetLineId(int index) => this.line_ids[index];
     public string GetName() => _hashMap[this.name];
