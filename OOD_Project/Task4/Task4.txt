@@ -1,0 +1,97 @@
+TASK 2: COLLECTIONS AND ITERATORS
+
+Note: If it says somewhere below that you can use C# List, that means you can use only basic methods: 
+- access by []
+- Add (adding to the end)
+- Insert(val, 0) (adding at beginning)
+- Clear()
+- RemoveAt(list.Count - 1) (removing from the end)
+- RemoveAt(0) (removing from beginning)
+All other methods are prohibited!
+Other collections are also prohibited.
+
+PART I: Implement collection assigned to you:
+
+For each collection you should provide:
+- forward iterator
+- reverse iterator
+- insertion function - depending on container this function may differ in parameters, it may be also necessary to implement a few functions (eg. something like pushFront() and pushBack() in 5).
+- deletion function, it can also differ. If colletion allow removing any element that Remove() function should take iterator, otherwise it's deletion eg. from back so it's parameterless 
+
+
+All iterators should implement common interface.
+
+Iterator may allocate only *constant* amount of memory - the only exception is the binary tree (collection 1).
+
+1. Binary tree:
+Each node of tree have reference to parent and two children (only root has null parent reference).  
+- insertion: go from the root:
+    - if node has one empty child add new node there
+    - if node has two empty children draw where add new node
+    - if node has no empty children descend to random child 
+- iteration: you can use any method (eg. preorder, inorder, postorder) but remember that you must create valid reverse iterator. In this one there is exception - you can use linear amount of memory (but I assure that you don't need that if you think a bit).
+- deletion: of any node. You can use any method, but tree must remain valid after operation
+
+//todo: This one
+2. Heap 
+Implemented in an array (you can use C# list), see eg. https://en.wikipedia.org/wiki/Binary_heap#Heap_implementation
+Constructor takes additional parameter - comparator to keep the heap order.
+- insertion: with keeping heap property 
+- iteration: just iterate over underlying array
+- deletion: only from the top of the heap, the heap must remain valid
+//todo
+
+3. Square array
+2D square array (you can use C# list). It's ordered in following way:
+0 1 4 9
+2 3 5 10
+6 7 8 ..
+.......
+So you first fill new column (without element on diagonal), then new row, then new diagonal element. Then you increase size of square and repeat.
+
+You should keep size of square and number of elements.
+- insertion: in order described above. If increasing size beyond capacity (eg. you have 9 elements and adds 10th) you must allocate new array (in that example 4x4) and copy old values there
+- iteration: in order specified above
+- deletion: only from back, you don't need to shrink array when decrasing square size (eg. when deleting 10th element)
+
+4. Hashmap
+Constructor takes additional parameter - capacity. There is underlying array with capacity size.
+- insertion: compute hash() of element (using C# hash()) and insert it at the end of the list at hash()%capacity position
+- deletion: of any element
+
+5. Deque
+Doubly-linked list, but each node has vector (you can use C# List<T>) - but with maximum 10 elements.
+- insertion:
+    - back inserion - if last node of list contains less than 10 elements append it there, otherwise create new node and append it
+    - front insertion - likewise, but append at the beginning of the vector or list
+- deletion: only from front and back
+
+6. Sorted array:
+Array (you can use C# List) that is always sorted. Contructor takes additional parameter - comparator.
+- insertion: you must find first greater element, and insert new element before it (part of array must be shifted)
+- deletion: of any element, array order must be keep
+- find() function (described below) should take logarithmic time (implement binary search)
+
+
+
+PART II: Implement following algorithms:
+
+Note: As far as we know some of you implemented c++-style iterators (with eg. begin() and end()). This is valid, but ofc these functions will look a bit different then - if you have doubts ask
+
+1. Find algorithm with a following pseudosignature:
+    Find(iterator , predicate) -> element or null
+    - iterator is a collection iterator which implements corresponding interface,
+    - predicate is a function which takes parameter of type stored in a collection and returns bool if the parameter satisfies condition,
+    - algorithm returns first element for which predicate retuns true or null otherwise.
+    
+2. ForEach algorithm with a following pseudosignature:
+    ForEach(iterator , function) -> void
+    - iterator is a collection iterator which implements corresponding interface,
+    - function is a function which takes parameter of type stored in a collection and performs some operations using it,
+    - if function modifies the object the object should not be changed after executing ForEach method.
+    
+3. CountIf algorithm with a following pseudosignature:
+    CountIf(iterator , predicate) -> int
+    - iterator is a collection iterator which implements corresponding interface,
+    - predicate is a function which takes parameter of type stored in a collection and returns bool if the parameter satisfies condition,
+    - algorithm returns number of elements that meet the condition.

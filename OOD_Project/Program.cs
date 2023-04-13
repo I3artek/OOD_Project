@@ -18,7 +18,7 @@ namespace OOD_Project
             };
 
             //TaskTesting.PerformOnAll(Cities, TaskTesting.Task2, "Task 2", true);
-            TaskTesting.PerformOnAll(Cities, TaskTesting.Task3, "Task3", true);
+            TaskTesting.PerformOnAll(Cities, TaskTesting.Task4, "Task4", true);
         }
     }
 }

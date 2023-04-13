@@ -131,4 +131,36 @@ public static class TaskTesting
     {
         return stop != null && stop.GetLineId(0) == 16;
     }
+    
+    public static void Task4(City city, bool _)
+    {
+        var linked = new DoublyLinkedList<IStop>();
+        var vector = new Vector<IStop>();
+        var heap = new MaxHeap<IStop>(((stop, stop1) => false));
+        foreach (var cityStop in city.stops)
+        {
+            linked.Add(cityStop);
+            vector.Add(cityStop);
+            heap.Add(cityStop);
+        }
+
+        WriteLineWithColor("Testing", ConsoleColor.Blue);
+        WriteLineWithColor("Find Linked Forward with iterator", ConsoleColor.Green);
+        Console.WriteLine(MyAlgorithms.Find<IStop>(linked.GetForwardEnumerator(), Task3TempPred));
+        WriteLineWithColor("Find Linked Reverse iterator", ConsoleColor.Green);
+        Console.WriteLine(MyAlgorithms.Find<IStop>(linked.GetReverseEnumerator(), Task3TempPred));
+        WriteLineWithColor("Find heap Forward", ConsoleColor.Green);
+        Console.WriteLine(MyAlgorithms.Find<IStop>(heap, Task3TempPred));
+        WriteLineWithColor("Find heap Reverse", ConsoleColor.Green);
+        Console.WriteLine(MyAlgorithms.Find<IStop>(heap.GetReverseEnumerator(), Task3TempPred));
+        
+        WriteLineWithColor("Testing", ConsoleColor.Blue);
+        WriteLineWithColor("foreach heap Forward", ConsoleColor.Green);
+        MyAlgorithms.ForEach(heap.GetForwardEnumerator(), Console.WriteLine);
+        WriteLineWithColor("Print Vector Forward", ConsoleColor.Green);
+        MyAlgorithms.Print<IStop>(vector, Task3TempPred);
+        WriteLineWithColor("countif Vector Reverse", ConsoleColor.Green);
+        Console.WriteLine(
+            MyAlgorithms.CountIf<IStop>(vector.GetForwardEnumerator(), Task3TempPred));
+    }
 }

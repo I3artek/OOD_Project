@@ -126,3 +126,91 @@ public class DoublyLinkedList<T> : IMyCollection<T>
         return GetForwardEnumerator();
     }
 }
+
+public class MaxHeap<T> : IMyCollection<T>
+    where T : class
+{
+    private List<T> data = new();
+    private Func<T, T, bool> IsBigger;
+
+    private bool IsSmaller(T a, T b) => IsBigger(b, a);
+
+    public MaxHeap(Func<T, T, bool> comparator)
+    {
+        this.IsBigger = comparator;
+    }
+
+    private int GetIndexOfBigger(int left, int right)
+    {
+        return IsBigger(data[right], data[left]) ? right : left;
+    }
+
+    private void UpHeap(int index)
+    {
+        //loop until current element is first
+        while (index > 0)
+        {
+            var parent_index = (int)Math.Floor((double)((index - 1) / 2));
+            //if the child is smaller/equal, do nothing
+            if (!IsBigger(this.data[index], this.data[parent_index])) return;
+            //else swap with parent and check the parent
+            (data[index], data[parent_index]) = (data[parent_index], data[index]);
+            index = parent_index;
+        }
+    }
+    
+    private void DownHeap(int index)
+    {
+        //loop until current element is first
+        while (index > 0)
+        {
+            var left_child = 2 * index + 1;
+            var right_child = 2 * index + 2;
+
+            var bigger_child = GetIndexOfBigger(left_child, right_child);
+
+            //if the bigger child is smaller/equal, do nothing
+            if (!IsBigger(data[bigger_child], data[index])) return;
+            //else swap and check from that child
+            (data[index], data[bigger_child]) = (data[bigger_child], data[index]);
+            index = bigger_child;
+        }
+    }
+
+    public IEnumerator<T> GetForwardEnumerator()
+    {
+        for (var i = 0; i < data.Count; i++)
+        {
+            yield return data[i];
+        }
+    }
+
+    public IEnumerator<T> GetReverseEnumerator()
+    {
+        for (var i = data.Count - 1; i >= 0; i--)
+        {
+            yield return data[i];
+        }
+    }
+
+    public void Add(T value)
+    {
+        this.data.Add(value);
+        UpHeap(this.data.Count - 1);
+    }
+
+    public void Remove(T value)
+    {
+        if(value != this.data[0]) return;
+        //swap the elements
+        (data[0], data[^1]) = (data[^1], data[0]);
+        //remove the previous root
+        data.RemoveAt(data.Count - 1);
+        DownHeap(0);
+    }
+
+    public void Delete()
+    {
+        Remove(data[0]);
+    }
+}

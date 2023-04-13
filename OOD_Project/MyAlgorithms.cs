@@ -26,4 +26,36 @@ public static class MyAlgorithms
             if (predicate(it.Current)) Console.WriteLine(it.Current);
         } while (it.MoveNext()) ;
     }
+    
+    public static T? Find<T>(IEnumerator<T> it, Func<T, bool> predicate)
+        where T : class
+    {
+        do
+        {
+            if (predicate(it.Current)) return it.Current;
+        } while (it.MoveNext()) ;
+
+        return null;
+    }
+    
+    public static void ForEach<T>(IEnumerator<T> it, Action<T> func)
+        where T : class
+    {
+        do
+        {
+            func(it.Current);
+        } while (it.MoveNext()) ;
+    }
+    
+    public static int CountIf<T>(IEnumerator<T> it, Func<T, bool> predicate)
+        where T : class
+    {
+        var count = 0;
+        do
+        {
+            if (predicate(it.Current)) count++;
+        } while (it.MoveNext());
+
+        return count;
+    }
 }
