@@ -16,8 +16,9 @@ namespace OOD_Project
                 StringBytezaria,
                 HashMapBytezaria
             };
-            
-            TaskTesting.PerformOnAll(Cities, TaskTesting.Task2, "Task 2", true);
+
+            //TaskTesting.PerformOnAll(Cities, TaskTesting.Task2, "Task 2", true);
+            TaskTesting.PerformOnAll(Cities, TaskTesting.Task3, "Task3", true);
         }
     }
 }

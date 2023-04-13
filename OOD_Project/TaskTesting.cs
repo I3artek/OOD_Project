@@ -2,13 +2,22 @@ namespace OOD_Project;
 
 public static class TaskTesting
 {
+    public static void WriteLineWithColor(string text, ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
+        Console.WriteLine(text);
+        Console.ResetColor();
+    }
+    
     //Expects provided function to print the results
     public static void PerformOnAll(IEnumerable<City> cities, Action<City, bool> f, 
         string action = "", bool PrintAll = false)
     {
         foreach (var city in cities)
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Performing {action} on {city.GetRepresentationName()}\n");
+            Console.ResetColor();
             f(city, PrintAll);
         }
     }
@@ -85,5 +94,41 @@ public static class TaskTesting
         {
             Console.WriteLine(selectedLine);
         }
+    }
+
+    public static void Task3(City city, bool _)
+    {
+        var linked = new DoublyLinkedList<IStop>();
+        var vector = new Vector<IStop>();
+        foreach (var cityStop in city.stops)
+        {
+            linked.Add(cityStop);
+            vector.Add(cityStop);
+        }
+
+        WriteLineWithColor("Testing", ConsoleColor.Blue);
+        WriteLineWithColor("Find Linked Forward", ConsoleColor.Green);
+        Console.WriteLine(MyAlgorithms.Find<IStop>(linked, Task3TempPred));
+        WriteLineWithColor("Find Linked Reverse", ConsoleColor.Green);
+        Console.WriteLine(MyAlgorithms.Find<IStop>(linked, Task3TempPred, false));
+        WriteLineWithColor("Find Vector Forward", ConsoleColor.Green);
+        Console.WriteLine(MyAlgorithms.Find<IStop>(linked, Task3TempPred));
+        WriteLineWithColor("Find Vector Reverse", ConsoleColor.Green);
+        Console.WriteLine(MyAlgorithms.Find<IStop>(linked, Task3TempPred, false));
+        
+        WriteLineWithColor("Testing", ConsoleColor.Blue);
+        WriteLineWithColor("Print Linked Forward", ConsoleColor.Green);
+        MyAlgorithms.Print<IStop>(linked, Task3TempPred);
+        WriteLineWithColor("Print Linked Reverse", ConsoleColor.Green);
+        MyAlgorithms.Print<IStop>(linked, Task3TempPred, false);
+        WriteLineWithColor("Print Vector Forward", ConsoleColor.Green);
+        MyAlgorithms.Print<IStop>(linked, Task3TempPred);
+        WriteLineWithColor("Print Vector Reverse", ConsoleColor.Green);
+        MyAlgorithms.Print<IStop>(linked, Task3TempPred, false);
+    }
+
+    private static bool Task3TempPred(IStop stop)
+    {
+        return stop != null && stop.GetLineId(0) == 16;
     }
 }

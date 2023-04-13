@@ -14,7 +14,7 @@ public interface IStop
 public class Stop : IStop
 {
     private int id { get; set; }
-    private List<int> line_ids { get; set; }
+    private List<int> line_ids { get; set; } = new();
     private List<Line> lines { get; set; } = new();
     private string name { get; set; }
     private typeEnum type { get; set; }
