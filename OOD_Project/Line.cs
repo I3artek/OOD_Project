@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace OOD_Project;
 
-public interface ILine
+public interface ILine : IVisitable
 {
     public string GetNumberHex();
     public int GetNumberDec();
@@ -13,6 +13,16 @@ public interface ILine
     public int GetVehicleId(int index);
     public int GetStopIdsCount();
     public int GetVehicleIdsCount();
+
+    string? IVisitable.GetParameter(string s)
+    {
+        return s switch
+        {
+            "NumberHex" => this.GetNumberHex(),
+            "NumberDec" => Convert.ToString(this.GetNumberDec()),
+            _ => null
+        };
+    }
 }
 
 public class Line : ILine

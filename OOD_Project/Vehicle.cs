@@ -1,6 +1,6 @@
 namespace OOD_Project;
 
-public interface IVehicle
+public interface IVehicle : IVisitable
 {
     public int GetId();
 }

@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace OOD_Project;
 
-public interface IStop
+public interface IStop : IVisitable
 {
     public int GetId();
     public int GetLineId(int index);

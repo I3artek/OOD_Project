@@ -18,7 +18,16 @@ namespace OOD_Project
             };
 
             //TaskTesting.PerformOnAll(Cities, TaskTesting.Task2, "Task 2", true);
-            TaskTesting.PerformOnAll(Cities, TaskTesting.Task4, "Task4", true);
+            //TaskTesting.PerformOnAll(Cities, TaskTesting.Task4, "Task4", true);
+
+            var xd = new TypeNameVisitor();
+            xd.Visit(BaseBytezaria.vehicles[0]);
+
+            var command = "";
+            while (command != "exit")
+            {
+                command = Console.ReadLine();
+            }
         }
     }
 }

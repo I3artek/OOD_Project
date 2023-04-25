@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace OOD_Project;
 
-public interface IDriver
+public interface IDriver : IVisitable
 {
     public int GetVehicleId(int index);
     public string GetName();
