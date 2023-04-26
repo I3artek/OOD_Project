@@ -9,6 +9,11 @@ public interface IStop : IVisitable
     public string GetName();
     public typeEnum GetType();
     public int GetLineIdsCount();
+    
+    void IVisitable.Accept(Visitor visitor)
+    {
+        visitor.VisitStop(this);
+    }
 }
 
 public class Stop : IStop

@@ -6,6 +6,11 @@ public interface ITrambit : IVehicle
 {
     public int GetCarsNumber();
     public int GetLineId();
+    
+    void IVisitable.Accept(Visitor visitor)
+    {
+        visitor.VisitTrambit(this);
+    }
 }
 
 public class Trambit : Vehicle, ITrambit

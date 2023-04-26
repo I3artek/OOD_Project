@@ -3,6 +3,11 @@ namespace OOD_Project;
 public interface IVehicle : IVisitable
 {
     public int GetId();
+    
+    void IVisitable.Accept(Visitor visitor)
+    {
+        visitor.VisitVehicle(this);
+    }
 }
 
 public abstract class Vehicle : IVehicle

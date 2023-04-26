@@ -14,14 +14,9 @@ public interface ILine : IVisitable
     public int GetStopIdsCount();
     public int GetVehicleIdsCount();
 
-    string? IVisitable.GetParameter(string s)
+    void IVisitable.Accept(Visitor visitor)
     {
-        return s switch
-        {
-            "NumberHex" => this.GetNumberHex(),
-            "NumberDec" => Convert.ToString(this.GetNumberDec()),
-            _ => null
-        };
+        visitor.VisitLine(this);
     }
 }
 

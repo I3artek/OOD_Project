@@ -2,7 +2,8 @@ namespace OOD_Project;
 
 public static class MyAlgorithms
 {
-    public static T? Find<T>(IMyCollection<T> collection, Func<T, bool> predicate, bool searchDirection = true)
+    public static T? Find<T>(IMyCollection<T> collection, 
+        Func<T, bool> predicate, bool searchDirection = true)
         where T : class
     {
         var it = searchDirection ? 
@@ -15,7 +16,8 @@ public static class MyAlgorithms
         return null;
     }
     
-    public static void Print<T>(IMyCollection<T> collection, Func<T, bool> predicate, bool searchDirection = true)
+    public static void Print<T>(IMyCollection<T> collection, 
+        Func<T, bool> predicate, bool searchDirection = true)
         where T : class
     {
         var it = searchDirection ? 
@@ -57,5 +59,18 @@ public static class MyAlgorithms
         } while (it.MoveNext());
 
         return count;
+    }
+    
+    public static T? DoIf<T>(IMyCollection<T> collection, 
+        Func<T, bool> predicate, Action<T> func)
+        where T : class
+    {
+        var it = collection.GetForwardEnumerator();
+        do
+        {
+            if (predicate(it.Current)) func(it.Current);
+        } while (it.MoveNext()) ;
+
+        return null;
     }
 }

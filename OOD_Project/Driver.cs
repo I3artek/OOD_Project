@@ -9,6 +9,11 @@ public interface IDriver : IVisitable
     public string GetSurname();
     public int GetSeniority();
     public int GetVehicleIdsCount();
+    
+    void IVisitable.Accept(Visitor visitor)
+    {
+        visitor.VisitDriver(this);
+    }
 }
 
 public class Driver : IDriver

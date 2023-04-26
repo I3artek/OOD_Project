@@ -7,6 +7,11 @@ public interface IBytebus : IVehicle
     public int GetLineId(int index);
     public engineClassEnum GetEngineClass();
     public int GetLineIdsCount();
+    
+    void IVisitable.Accept(Visitor visitor)
+    {
+        visitor.VisitBytebus(this);
+    }
 }
 
 public class Bytebus : Vehicle, IBytebus
