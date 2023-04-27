@@ -61,7 +61,7 @@ public static class MyAlgorithms
         return count;
     }
     
-    public static T? DoIf<T>(IMyCollection<T> collection, 
+    public static void DoIf<T>(IMyCollection<T> collection, 
         Func<T, bool> predicate, Action<T> func)
         where T : class
     {
@@ -71,6 +71,12 @@ public static class MyAlgorithms
             if (predicate(it.Current)) func(it.Current);
         } while (it.MoveNext()) ;
 
-        return null;
+        return;
+    }
+    
+    public static void PrintIf<T>(IMyCollection<T> collection, Func<T, bool> predicate)
+        where T : class
+    {
+        DoIf(collection, predicate, Console.WriteLine);
     }
 }

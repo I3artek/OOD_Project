@@ -15,6 +15,27 @@ public static class MyCLI
     {
         InitAllObjects();
         Commands.Add("list", List);
+        Commands.Add("find", Find);
+    }
+
+    public static List<string> GetConditions(string command)
+    {
+        var conditions = new List<string>();
+        var id = Regex.Match(command, ".+? .+? ").Length;
+        var args = Regex.Matches(command[id..],
+            "[^ ]+?[=<>][^\" ]+|[^ ]+?[=<>]\"[^\"]+\"");
+        foreach (Match o in args)
+        {
+            conditions.Add(o.Value.Replace("\"", ""));
+        }
+
+        return conditions;
+    }
+
+    public static void idk(string c)
+    {
+        var compareSymbol = Regex.Match(c, "[=<>]").Value;
+        var values = c.Replace("\"", "").Split(compareSymbol);
     }
 
     private static void InitAllObjects()
@@ -99,6 +120,44 @@ public static class MyCLI
 
     private static void Find(string command)
     {
-        var args = command.Split(" ");
+        var xd = command.Split(" ");
+        var typeVisitor = new TypeNameVisitor();
+        var typeName = xd[1];
+
+        var conditions = GetConditions(command);
+
+        bool predicate(IVisitable o)
+        {
+            if (typeVisitor.GetTypeName(o) != typeName)
+                return false;
+            var compareVisitor = new CompareFieldVisitor();
+            foreach (var condition in conditions)
+            {
+                try
+                {
+                    if (!compareVisitor.Compare(o, condition))
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    var missingField = Regex.Match(condition, "[^=<>]+").Value;
+                    Console.WriteLine($"Class {typeName} does not have field {missingField}");
+                    throw;
+                }
+            }
+
+            return true;
+        }
+
+        try
+        {
+            MyAlgorithms.PrintIf(AllObjects, predicate);
+        }
+        catch (Exception e)
+        {
+            // ignored
+        }
     }
 }
