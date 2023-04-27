@@ -39,6 +39,13 @@ public class Line : ILine
         this.InitRefs();
     }
 
+    public Line(string numberHex, int numberDec, string commonName)
+    {
+        this.numberHex = numberHex;
+        this.numberDec = numberDec;
+        this.commonName = commonName;
+    }
+
     public Line(LineString ls)
     {
         this.Init(ls);

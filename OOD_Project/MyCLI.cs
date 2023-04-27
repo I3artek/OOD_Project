@@ -165,10 +165,25 @@ public static class MyCLI
     private static void Add(string command)
     {
         var values = command.Split(" ");
-        var obj = ObjectCreator.Create(values[1], values[2]);
-        if (obj != null)
+        var created = false;
+        try
         {
+            var obj = ObjectCreator.Create(values[1], values[2]);
+            if (obj == null) return;
             AllObjects.Add(obj);
+            created = true;
+            TaskTesting.WriteLineWithColor("Created object:\n" + obj, ConsoleColor.Yellow);
+        }
+        catch (Exception e)
+        {
+            // ignored
+        }
+        finally
+        {
+            if (!created)
+            {
+                TaskTesting.WriteLineWithColor("Object not created", ConsoleColor.DarkRed);
+            }
         }
     }
 }

@@ -51,14 +51,27 @@ public static class ObjectCreator
             Console.WriteLine($"No representation with name {repName}");
             Console.WriteLine("Available names");
             reps.ForEach(Console.WriteLine);
+            throw new Exception();
         }
-        var availableFields = GetAvailableFields(typeName);
+
+        Dictionary<string, string> availableFields;
+        try
+        {
+            availableFields = GetAvailableFields(typeName);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"No class with name {typeName}");
+            throw;
+        }
         TaskTesting.WriteLineWithColor(
             "Available Fields:", ConsoleColor.Cyan);
         foreach (var availableFieldsKey in availableFields.Keys)
         {
             Console.WriteLine(availableFieldsKey);
         }
+
+        Console.Write(">");
         var command = Console.ReadLine();
         while (command != "exit" && command != "done")
         {
@@ -72,6 +85,7 @@ public static class ObjectCreator
             {
                 Console.WriteLine($"Class {typeName} does not have field {values[0]}");
             }
+            Console.Write(">");
             command = Console.ReadLine();
         }
 
@@ -81,14 +95,31 @@ public static class ObjectCreator
         switch (typeName)
         {
             case "Line":
-                var lineString = new LineString($"{availableFields["NumberHex"]}({availableFields["NumberDec"]})" 
-                                               + $"`{availableFields["CommonName"]}`@!");
-                return repName switch
+                // var lineString = new LineString($"{availableFields["NumberHex"]}({availableFields["NumberDec"]})" 
+                //                                + $"`{availableFields["CommonName"]}`@!");
+                // return repName switch
+                // {
+                //     "Base" => new Line(lineString),
+                //     "String" => lineString,
+                //     "HashMap" => new LineHashMap(lineString)
+                // };
+                try
                 {
-                    "Base" => new Line(lineString),
-                    "String" => lineString,
-                    "HashMap" => new LineHashMap(lineString)
-                };
+                    var line = new Line(availableFields["NumberHex"], 
+                        int.Parse(availableFields["NumberDec"]), 
+                        availableFields["CommonName"]);
+                    return repName switch
+                    {
+                        "Base" => line,
+                        "String" => line.ToRep1(),
+                        "HashMap" => new LineHashMap(line)
+                    };
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Provided field values are in wrong format");
+                    throw;
+                }
             case "Stop":
                 var stopString = new StopString($"#{availableFields["Id"]}(){availableFields["Name"]}" +
                                                $"/{availableFields["Type"]}");
