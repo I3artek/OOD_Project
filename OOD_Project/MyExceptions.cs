@@ -6,27 +6,27 @@ public class InvalidDataFormatException : Exception
     {
         switch (o)
         {
-            case LineString or Line:
+            case ILine:
                 Console.WriteLine("String is in the wrong format!");
                 Console.WriteLine("Required: <numberHex>(<numberDec>)`<commonName>`@<stop id>,...!<vehicle id>,...");
                 Console.WriteLine("Obtained: " + s);
                 break;
-            case StopString or Stop:
+            case IStop:
                 Console.WriteLine("String is in the wrong format!");
                 Console.WriteLine("Required: #<id>(<line id>,...)<name>/<type>");
                 Console.WriteLine("Obtained: " + s);
                 break;
-            case BytebusString or Bytebus:
+            case IBytebus:
                 Console.WriteLine("String is in the wrong format!");
                 Console.WriteLine("Required: #<id>^<engineClass>*<line id>,...");
                 Console.WriteLine("Obtained: " + s);
                 break;
-            case TrambitString or Trambit:
+            case ITrambit:
                 Console.WriteLine("String is in the wrong format!");
                 Console.WriteLine("Required: #<id>(<carsNumber>)<line id>,...");
                 Console.WriteLine("Obtained: " + s);
                 break;
-            case DriverString or Driver:
+            case IDriver:
                 Console.WriteLine("String is in the wrong format!");
                 Console.WriteLine("Required: <name> <surname>(<seniority>)@<vehicle id>,...");
                 Console.WriteLine("Obtained: " + s);

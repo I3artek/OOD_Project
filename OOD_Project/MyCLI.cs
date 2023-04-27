@@ -16,6 +16,7 @@ public static class MyCLI
         InitAllObjects();
         Commands.Add("list", List);
         Commands.Add("find", Find);
+        Commands.Add("add", Add);
     }
 
     public static List<string> GetConditions(string command)
@@ -158,6 +159,16 @@ public static class MyCLI
         catch (Exception e)
         {
             // ignored
+        }
+    }
+
+    private static void Add(string command)
+    {
+        var values = command.Split(" ");
+        var obj = ObjectCreator.Create(values[1], values[2]);
+        if (obj != null)
+        {
+            AllObjects.Add(obj);
         }
     }
 }
