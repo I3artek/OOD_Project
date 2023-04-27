@@ -31,6 +31,13 @@ public class Stop : IStop
         this.Init(ss);
         this.InitRefs();
     }
+
+    public Stop(int id, string name, typeEnum type)
+    {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+    }
     
     public Stop(StopString ss)
     {

@@ -27,6 +27,11 @@ public class Bytebus : Vehicle, IBytebus
         this.Init(bs);
         this.InitRefs();
     }
+
+    public Bytebus(int id, engineClassEnum engineClass) : base(id)
+    {
+        this.engineClass = engineClass;
+    }
     
     public Bytebus(BytebusString bs) : base(bs)
     {

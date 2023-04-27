@@ -9,6 +9,7 @@ public static class MyCLI
     private static List<IVisitable> AllObjectsList = new();
     private static Vector<IVisitable> AllObjectsVector;
     private static DoublyLinkedList<IVisitable> AllObjectsDoublyLinkedList;
+    private static MaxHeap<IVisitable> AllObjectsMaxHeap;
     private static IMyCollection<IVisitable> AllObjects;
 
     static MyCLI()
@@ -46,7 +47,8 @@ public static class MyCLI
         AllObjectsList.AddRange(city.drivers);
         AllObjectsList.AddRange(city.lines);
         AllObjectsList.AddRange(city.stops);
-        UseVector();
+        //UseVector();
+        UseMaxHeap();
     }
 
     public static void UseVector()
@@ -65,7 +67,7 @@ public static class MyCLI
     
     public static void UseDoublyLinkedList()
     {
-        if (AllObjectsVector == null)
+        if (AllObjectsDoublyLinkedList == null)
         {
             AllObjectsDoublyLinkedList = new DoublyLinkedList<IVisitable>();
             foreach (var visitable in AllObjectsList)
@@ -75,6 +77,21 @@ public static class MyCLI
         }
 
         AllObjects = AllObjectsDoublyLinkedList;
+    }
+    
+    public static void UseMaxHeap()
+    {
+        if (AllObjectsMaxHeap == null)
+        {
+            AllObjectsMaxHeap= new MaxHeap<IVisitable>(
+                (v1, v2) => false);
+            foreach (var visitable in AllObjectsList)
+            {
+                AllObjectsMaxHeap.Add(visitable);
+            }
+        }
+
+        AllObjects = AllObjectsMaxHeap;
     }
 
     public static void PrintCommands()

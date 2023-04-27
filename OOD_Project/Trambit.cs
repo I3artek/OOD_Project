@@ -26,6 +26,11 @@ public class Trambit : Vehicle, ITrambit
         this.Init(ts);
         this.InitRefs();
     }
+
+    public Trambit(int id, int carsNumber) : base(id)
+    {
+        this.carsNumber = carsNumber;
+    }
     
     public Trambit(TrambitString ts) : base(ts)
     {

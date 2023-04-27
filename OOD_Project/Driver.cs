@@ -31,6 +31,13 @@ public class Driver : IDriver
         this.Init(ds);
         this.InitRefs();
     }
+
+    public Driver(string name, string surname, int seniority)
+    {
+        this.name = name;
+        this.surname = surname;
+        this.seniority = seniority;
+    }
     
     public Driver(DriverString ds)
     {

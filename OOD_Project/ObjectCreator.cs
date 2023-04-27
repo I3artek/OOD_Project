@@ -8,31 +8,31 @@ public static class ObjectCreator
         {
             "Line" => new Dictionary<string, string>
             {
-                { "NumberHex", "" },
-                { "NumberDec", "" },
-                { "CommonName", "" }
+                { "NumberHex", "0" },
+                { "NumberDec", "0" },
+                { "CommonName", "placeholder name" }
             },
             "Stop" => new Dictionary<string, string>
             {
-                { "Id", "" },
-                { "Name", "" },
-                { "Type", "" }
+                { "Id", "0" },
+                { "Name", "placeholder name" },
+                { "Type", "bus" }
             },
             "Bytebus" => new Dictionary<string, string>
             {
-                { "Id", "" },
-                { "EngineClass", "" }
+                { "Id", "0" },
+                { "EngineClass", "gibgaz" }
             },
             "Trambit" => new Dictionary<string, string>
             {
-                { "Id", "" },
-                { "CarsNumber", "" }
+                { "Id", "0" },
+                { "CarsNumber", "0" }
             },
             "Driver" => new Dictionary<string, string>
             {
-                { "Name", "" },
-                { "Surname", "" },
-                { "Seniority", "" }
+                { "Name", "placeholder name" },
+                { "Surname", "placeholder surname" },
+                { "Seniority", "0" }
             },
             _ => throw new Exception()
         };
@@ -42,9 +42,8 @@ public static class ObjectCreator
     {
         var reps = new List<string>
         {
-            "Base",
-            "String",
-            "HashMap"
+            "base",//base
+            "secondary"//hashmap
         };
         if (!reps.Contains(repName))
         {
@@ -92,92 +91,60 @@ public static class ObjectCreator
         if (command == "exit")
             return null;
 
-        switch (typeName)
+        try
         {
-            case "Line":
-                // var lineString = new LineString($"{availableFields["NumberHex"]}({availableFields["NumberDec"]})" 
-                //                                + $"`{availableFields["CommonName"]}`@!");
-                // return repName switch
-                // {
-                //     "Base" => new Line(lineString),
-                //     "String" => lineString,
-                //     "HashMap" => new LineHashMap(lineString)
-                // };
-                try
-                {
+            switch (typeName)
+            {
+                case "Line":
                     var line = new Line(availableFields["NumberHex"], 
-                        int.Parse(availableFields["NumberDec"]), 
-                        availableFields["CommonName"]);
+                            int.Parse(availableFields["NumberDec"]), 
+                            availableFields["CommonName"]);
                     return repName switch
                     {
-                        "Base" => line,
-                        "String" => line.ToRep1(),
-                        "HashMap" => new LineHashMap(line)
+                        "base" => line,
+                        "secondary" => new LineHashMap(line)
                     };
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Provided field values are in wrong format");
-                    throw;
-                }
-            case "Stop":
-                var stopString = new StopString($"#{availableFields["Id"]}(){availableFields["Name"]}" +
-                                               $"/{availableFields["Type"]}");
-                return repName switch
-                {
-                    "Base" => new Stop(stopString),
-                    "String" => stopString,
-                    "HashMap" => new StopHashMap(stopString)
-                };
-            case "Bytebus":
-                var bytebusString = new BytebusString($"#{availableFields["Id"]}" +
-                                                  $"^{availableFields["EngineClass"]}*");
-                return repName switch
-                {
-                    "Base" => new Bytebus(bytebusString),
-                    "String" => bytebusString,
-                    "HashMap" => new BytebusHashMap(bytebusString)
-                };
-            case "Trambit":
-                var trambitString = new TrambitString($"#{availableFields["Id"]}" +
-                                                  $"({availableFields["CarsNumber"]})");
-                return repName switch
-                {
-                    "Base" => new Trambit(trambitString),
-                    "String" => trambitString,
-                    "HashMap" => new TrambitHashMap(trambitString)
-                };
-            case "Driver":
-                var driverString = new DriverString($"{availableFields["Name"]} {availableFields["Surname"]}" 
-                                                 + $"({availableFields["Seniority"]}@");
-                return repName switch
-                {
-                    "Base" => new Driver(driverString),
-                    "String" => driverString,
-                    "HashMap" => new DriverHashMap(driverString)
-                };
-            default:
-                throw new Exception();
+                case "Stop":
+                    var stop = new Stop(int.Parse(availableFields["Id"]), availableFields["Name"], 
+                        (typeEnum)Enum.Parse(typeof(typeEnum), availableFields["Type"]));
+                    return repName switch
+                    {
+                        "base" => stop,
+                        "secondary" => new StopHashMap(stop)
+                    };
+                case "Bytebus":
+                    var bytebus = new Bytebus(int.Parse(availableFields["Id"]), 
+                        (engineClassEnum)Enum.Parse(typeof(engineClassEnum), availableFields["EngineClass"]));
+                    return repName switch
+                    {
+                        "base" => bytebus,
+                        "secondary" => new BytebusHashMap(bytebus)
+                    };
+                case "Trambit":
+                    var trambit = new Trambit(int.Parse(availableFields["Id"]), 
+                        int.Parse(availableFields["CarsNumber"]));
+                    return repName switch
+                    {
+                        "base" => trambit,
+                        "secondary" => new TrambitHashMap(trambit)
+                    };
+                case "Driver":
+                    var driver = new Driver(availableFields["Name"], availableFields["Surname"], 
+                        int.Parse(availableFields["Seniority"]));
+                    return repName switch
+                    {
+                        "base" => driver,
+                        "secondary" => new DriverHashMap(driver)
+                    };
+                default:
+                    throw new Exception();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Provided field values are in wrong format");
+            throw;
         }
         
-    }
-
-    private static IVisitable CreateStringRep(string typeName, Dictionary<string, string> availableFields)
-    {
-        switch (typeName)
-        {
-            case "Line":
-                return new LineString($"{availableFields["NumberHex"]}({availableFields["NumberDec"]})" + $"`{availableFields["CommonName"]}@!`");
-            case "Stop":
-                return new StopString($"#{availableFields["Id"]}(){availableFields["Name"]}/{availableFields["Type"]}");
-            case "Bytebus":
-                return new BytebusString($"#{availableFields["Id"]}^{availableFields["EngineClass"]}*");
-            case "Trambit":
-                return new TrambitString($"#{availableFields["Id"]}({availableFields["CarsNumber"]})");
-            case "Driver":
-                return new DriverString($"{availableFields["Name"]} {availableFields["Surname"]}" + $"({availableFields["Seniority"]}@");
-            default:
-                throw new Exception();
-        }
     }
 }

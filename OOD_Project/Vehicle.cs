@@ -19,6 +19,11 @@ public abstract class Vehicle : IVehicle
         this.id = v.GetId();
     }
 
+    protected Vehicle(int id)
+    {
+        this.id = id;
+    }
+
     protected Vehicle(VehicleString vs)
     {
     }
