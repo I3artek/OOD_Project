@@ -248,13 +248,15 @@ public static class MyCLI
         try
         {
             //check if the requirements identify one record uniquely
-            if (MyAlgorithms.CountIf(AllObjects, predicate) != 1)
+            var objectToEdit = MyAlgorithms.IdentifyUniquely(AllObjects, predicate);
+            if (objectToEdit == null)
             {
                 TaskTesting.WriteLineWithColor(
                     "Provided requirements do not identify one record uniquely!", ConsoleColor.Red);
                 return;
             }
-            var objectToEdit = MyAlgorithms.Find(AllObjects, predicate);
+            TaskTesting.WriteLineWithColor(
+                "Found object:\n" + objectToEdit, ConsoleColor.DarkBlue);
             if (ObjectModifier.Modify(typeName, objectToEdit))
             {
                 TaskTesting.WriteLineWithColor(
@@ -263,7 +265,7 @@ public static class MyCLI
             else
             {
                 TaskTesting.WriteLineWithColor(
-                    "Object not modified!" + objectToEdit, ConsoleColor.Red);
+                    "Object not modified!", ConsoleColor.Red);
             }
         }
         catch (Exception e)

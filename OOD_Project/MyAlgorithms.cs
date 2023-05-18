@@ -86,4 +86,10 @@ public static class MyAlgorithms
     {
         DoIf(collection, predicate, Console.WriteLine);
     }
+
+    public static T? IdentifyUniquely<T>(IMyCollection<T> collection, Func<T, bool> predicate)
+        where T : class
+    {
+        return CountIf(collection, predicate) == 1 ? MyAlgorithms.Find(collection, predicate) : null;
+    }
 }
