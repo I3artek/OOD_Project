@@ -24,6 +24,8 @@ public static class MyCLI
         Commands.Add("queue print", QueuePrint);
         Commands.Add("queue export", QueueExport);
         Commands.Add("queue load", QueueLoad);
+        Commands.Add("delete", Delete);
+        Commands.Add("queue dismiss", QueueDismiss);
     }
 
     public static List<string> GetConditions(string command)
@@ -49,11 +51,11 @@ public static class MyCLI
         AllObjectsList.AddRange(city.drivers);
         AllObjectsList.AddRange(city.lines);
         AllObjectsList.AddRange(city.stops);
-        //UseVector();
-        UseMaxHeap();
+        UseVector();
+        //UseMaxHeap();
     }
 
-    public static void UseVector()
+    private static void UseVector()
     {
         if (AllObjectsVector == null)
         {
@@ -67,7 +69,7 @@ public static class MyCLI
         AllObjects = AllObjectsVector;
     }
     
-    public static void UseDoublyLinkedList()
+    private static void UseDoublyLinkedList()
     {
         if (AllObjectsDoublyLinkedList == null)
         {
@@ -81,7 +83,7 @@ public static class MyCLI
         AllObjects = AllObjectsDoublyLinkedList;
     }
     
-    public static void UseMaxHeap()
+    private static void UseMaxHeap()
     {
         if (AllObjectsMaxHeap == null)
         {
@@ -146,37 +148,7 @@ public static class MyCLI
 
     private static void Find(string command)
     {
-        var xd = command.Split(" ");
-        var typeVisitor = new TypeNameVisitor();
-        var typeName = xd[1];
-
-        var conditions = GetConditions(command);
-
-        bool predicate(IVisitable o)
-        {
-            if (typeVisitor.GetTypeName(o) != typeName)
-                return false;
-            var compareVisitor = new CompareFieldVisitor();
-            foreach (var condition in conditions)
-            {
-                try
-                {
-                    if (!compareVisitor.Compare(o, condition))
-                    {
-                        return false;
-                    }
-                }
-                catch (Exception e)
-                {
-                    var missingField = Regex.Match(condition, "[^=<>]+").Value;
-                    Console.WriteLine($"Class {typeName} does not have field {missingField}");
-                    throw;
-                }
-            }
-
-            return true;
-        }
-
+        var predicate = CreatePredicate(command);
         try
         {
             MyAlgorithms.PrintIf(AllObjects, predicate);
@@ -215,35 +187,9 @@ public static class MyCLI
     private static void Edit(string command)
     {
         var xd = command.Split(" ");
-        var typeVisitor = new TypeNameVisitor();
         var typeName = xd[1];
 
-        var conditions = GetConditions(command);
-
-        bool predicate(IVisitable o)
-        {
-            if (typeVisitor.GetTypeName(o) != typeName)
-                return false;
-            var compareVisitor = new CompareFieldVisitor();
-            foreach (var condition in conditions)
-            {
-                try
-                {
-                    if (!compareVisitor.Compare(o, condition))
-                    {
-                        return false;
-                    }
-                }
-                catch (Exception e)
-                {
-                    var missingField = Regex.Match(condition, "[^=<>]+").Value;
-                    Console.WriteLine($"Class {typeName} does not have field {missingField}");
-                    throw;
-                }
-            }
-
-            return true;
-        }
+        var predicate = CreatePredicate(command);
 
         try
         {
@@ -321,5 +267,71 @@ public static class MyCLI
                 CMDQ.LoadFromPlainText(filename);
                 break;
         }
+    }
+
+    private static void Delete(string command)
+    {
+        var predicate = CreatePredicate(command);
+        
+        try
+        {
+            //check if the requirements identify one record uniquely
+            var objectToDelete = MyAlgorithms.IdentifyUniquely(AllObjects, predicate);
+            if (objectToDelete == null)
+            {
+                TaskTesting.WriteLineWithColor(
+                    "Provided requirements do not identify one record uniquely!", ConsoleColor.Red);
+                return;
+            }
+            TaskTesting.WriteLineWithColor(
+                "Found object:\n" + objectToDelete, ConsoleColor.DarkBlue);
+            AllObjects.Remove(objectToDelete);
+            TaskTesting.WriteLineWithColor(
+                "Deleted the object from collection", ConsoleColor.DarkBlue);
+        }
+        catch (Exception e)
+        {
+            // ignored
+        }
+    }
+
+    private static Func<IVisitable, bool> CreatePredicate(string command)
+    {
+        var xd = command.Split(" ");
+        var typeVisitor = new TypeNameVisitor();
+        var typeName = xd[1];
+
+        var conditions = GetConditions(command);
+        bool predicate(IVisitable o)
+        {
+            if (typeVisitor.GetTypeName(o) != typeName)
+                return false;
+            var compareVisitor = new CompareFieldVisitor();
+            foreach (var condition in conditions)
+            {
+                try
+                {
+                    if (!compareVisitor.Compare(o, condition))
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    var missingField = Regex.Match(condition, "[^=<>]+").Value;
+                    Console.WriteLine($"Class {typeName} does not have field {missingField}");
+                    throw;
+                }
+            }
+
+            return true;
+        }
+
+        return predicate;
+    }
+
+    private static void QueueDismiss(string command)
+    {
+        CMDQ.Clear();
     }
 }
