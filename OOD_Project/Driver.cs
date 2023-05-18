@@ -6,8 +6,11 @@ public interface IDriver : IVisitable
 {
     public int GetVehicleId(int index);
     public string GetName();
+    public void SetName(string value);
     public string GetSurname();
+    public void SetSurname(string value);
     public int GetSeniority();
+    public void SetSeniority(int value);
     public int GetVehicleIdsCount();
     
     void IVisitable.Accept(Visitor visitor)
@@ -140,8 +143,14 @@ public class Driver : IDriver
 
     public int GetVehicleId(int index) => this.vehicle_ids[index];
     public string GetName() => this.name;
+    public void SetName(string value) => name = value;
+
     public string GetSurname() => this.surname;
+    public void SetSurname(string value) => surname = value;
+
     public int GetSeniority() => this.seniority;
+    public void SetSeniority(int value) => seniority = value;
+
     public int GetVehicleIdsCount() => this.vehicle_ids.Count;
 }
 
@@ -178,8 +187,23 @@ public class DriverString : IDriver
 
     public int GetVehicleId(int index) => new Driver(this).GetVehicleId(index);
     public string GetName() => new Driver(this).GetName();
+    public void SetName(string value)
+    {
+        throw new NotImplementedException();
+    }
+
     public string GetSurname() => new Driver(this).GetSurname();
+    public void SetSurname(string value)
+    {
+        throw new NotImplementedException();
+    }
+
     public int GetSeniority() => new Driver(this).GetSeniority();
+    public void SetSeniority(int value)
+    {
+        throw new NotImplementedException();
+    }
+
     public int GetVehicleIdsCount() => new Driver(this).GetVehicleIdsCount();
 }
 
@@ -187,9 +211,9 @@ public class DriverHashMap : IDriver
 {
     private static readonly HashMap _hashMap = new();
     private readonly HashedList vehicle_ids = new(_hashMap);
-    private readonly int name;
-    private readonly int surname;
-    private readonly int seniority;
+    private int name;
+    private int surname;
+    private int seniority;
 
     public DriverHashMap(IDriver d)
     {
@@ -210,7 +234,13 @@ public class DriverHashMap : IDriver
 
     public int GetVehicleId(int index) => vehicle_ids[index];
     public string GetName() => _hashMap[this.name];
+    public void SetName(string value) => name = _hashMap.Add(value);
+
     public string GetSurname() => _hashMap[this.surname];
+    public void SetSurname(string value) => surname = _hashMap.Add(value);
+
     public int GetSeniority() => Convert.ToInt32(_hashMap[this.seniority]);
+    public void SetSeniority(int value) => seniority = _hashMap.Add(value);
+
     public int GetVehicleIdsCount() => this.vehicle_ids.Count;
 }

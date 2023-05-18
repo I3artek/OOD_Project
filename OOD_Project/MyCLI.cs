@@ -11,6 +11,7 @@ public static class MyCLI
     private static DoublyLinkedList<IVisitable> AllObjectsDoublyLinkedList;
     private static MaxHeap<IVisitable> AllObjectsMaxHeap;
     private static IMyCollection<IVisitable> AllObjects;
+    private static CommandQueue CMDQ = new();
 
     static MyCLI()
     {
@@ -18,6 +19,11 @@ public static class MyCLI
         Commands.Add("list", List);
         Commands.Add("find", Find);
         Commands.Add("add", Add);
+        Commands.Add("edit", Edit);
+        Commands.Add("queue commit", QueueCommit);
+        Commands.Add("queue print", QueuePrint);
+        Commands.Add("queue export", QueueExport);
+        Commands.Add("queue load", QueueLoad);
     }
 
     public static List<string> GetConditions(string command)
@@ -34,15 +40,11 @@ public static class MyCLI
         return conditions;
     }
 
-    public static void idk(string c)
-    {
-        var compareSymbol = Regex.Match(c, "[=<>]").Value;
-        var values = c.Replace("\"", "").Split(compareSymbol);
-    }
-
     private static void InitAllObjects()
     {
-        var city = new StringCity();
+        //necessary as the string representation
+        //does not implement editing
+        var city = new BaseCity(new StringCity());
         AllObjectsList.AddRange(city.vehicles);
         AllObjectsList.AddRange(city.drivers);
         AllObjectsList.AddRange(city.lines);
@@ -112,9 +114,15 @@ public static class MyCLI
     {
         var action = 
             Regex.Match(command, ".+? ").Value[..^1];
-        if (Commands.ContainsKey(action))
+        if (action == "queue")
         {
+            action = 
+                Regex.Match(command, "queue .+? ").Value[..^1];
             Commands[action](command);
+        }
+        else if (Commands.ContainsKey(action))
+        {
+            CMDQ.Add(action, command);
         }
         else
         {
@@ -185,7 +193,7 @@ public static class MyCLI
         var created = false;
         try
         {
-            var obj = ObjectCreator.Create(values[1], values[2]);
+            var obj = ObjectModifier.Create(values[1], values[2]);
             if (obj == null) return;
             AllObjects.Add(obj);
             created = true;
@@ -201,6 +209,115 @@ public static class MyCLI
             {
                 TaskTesting.WriteLineWithColor("Object not created", ConsoleColor.DarkRed);
             }
+        }
+    }
+
+    private static void Edit(string command)
+    {
+        var xd = command.Split(" ");
+        var typeVisitor = new TypeNameVisitor();
+        var typeName = xd[1];
+
+        var conditions = GetConditions(command);
+
+        bool predicate(IVisitable o)
+        {
+            if (typeVisitor.GetTypeName(o) != typeName)
+                return false;
+            var compareVisitor = new CompareFieldVisitor();
+            foreach (var condition in conditions)
+            {
+                try
+                {
+                    if (!compareVisitor.Compare(o, condition))
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    var missingField = Regex.Match(condition, "[^=<>]+").Value;
+                    Console.WriteLine($"Class {typeName} does not have field {missingField}");
+                    throw;
+                }
+            }
+
+            return true;
+        }
+
+        try
+        {
+            //check if the requirements identify one record uniquely
+            if (MyAlgorithms.CountIf(AllObjects, predicate) != 1)
+            {
+                TaskTesting.WriteLineWithColor(
+                    "Provided requirements do not identify one record uniquely!", ConsoleColor.Red);
+                return;
+            }
+            var objectToEdit = MyAlgorithms.Find(AllObjects, predicate);
+            if (ObjectModifier.Modify(typeName, objectToEdit))
+            {
+                TaskTesting.WriteLineWithColor(
+                    "Modified object:\n" + objectToEdit, ConsoleColor.Yellow);
+            }
+            else
+            {
+                TaskTesting.WriteLineWithColor(
+                    "Object not modified!" + objectToEdit, ConsoleColor.Red);
+            }
+        }
+        catch (Exception e)
+        {
+            // ignored
+        }
+    }
+
+    private static void QueuePrint(string command)
+    {
+        Console.WriteLine(CMDQ);
+    }
+
+    private static void QueueCommit(string command)
+    {
+        var c = CMDQ.Pop();
+        while (c != null)
+        {
+            TaskTesting.WriteLineWithColor(
+                "Executing \"" + c.Value.Item2 + "\"\n", ConsoleColor.Green);
+            Commands[c.Value.Item1](c.Value.Item2);
+            c = CMDQ.Pop();
+        }
+    }
+
+    private static void QueueExport(string command)
+    {
+        var args = command.Replace(
+            "queue export ", "").Split(" ");
+        switch (args[1])
+        {
+            case "XML":
+                CMDQ.ExportToXML(args[0]);
+                break;
+            case "plaintext":
+                CMDQ.ExportToPlainText(args[0]);
+                break;
+        }
+    }
+
+    private static void QueueLoad(string command)
+    {
+        var filename = command
+            .Replace("queue load ", "")
+            .Replace(" ", "");
+        var ext = Regex.Match(filename, "[.].+").Value[1..];
+        switch (ext)
+        {
+            case "xml":
+                CMDQ.LoadFromXML(filename);
+                break;
+            case "txt":
+                CMDQ.LoadFromPlainText(filename);
+                break;
         }
     }
 }

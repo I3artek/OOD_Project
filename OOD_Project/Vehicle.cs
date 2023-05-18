@@ -3,6 +3,7 @@ namespace OOD_Project;
 public interface IVehicle : IVisitable
 {
     public int GetId();
+    public void SetId(int value);
     
     void IVisitable.Accept(Visitor visitor)
     {
@@ -32,20 +33,26 @@ public abstract class Vehicle : IVehicle
     public abstract VehicleString ToRep1();
     public abstract void UpdateRefs();
     public int GetId() => this.id;
+    public void SetId(int value) => id = value;
 }
 
 public abstract class VehicleString : IVehicle
 {
     public abstract int GetId();
+    public void SetId(int value)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public abstract class VehicleHashMap : IVehicle
 {
     protected static readonly HashMap _hashMap = new();
-    protected readonly int id;
+    protected int id;
     protected VehicleHashMap(IVehicle v)
     {
         this.id = _hashMap.Add(v.GetId());
     }
     public int GetId() => Convert.ToInt32(_hashMap[id]);
+    public void SetId(int value) => id = _hashMap.Add(value);
 }

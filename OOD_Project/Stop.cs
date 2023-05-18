@@ -5,9 +5,17 @@ namespace OOD_Project;
 public interface IStop : IVisitable
 {
     public int GetId();
+    public void SetId(int value);
     public int GetLineId(int index);
     public string GetName();
+    public void SetName(string value);
     public typeEnum GetType();
+    public void SetType(typeEnum value);
+    public void SetType(string value)
+    {
+        Enum.TryParse(value, out typeEnum _type);
+        SetType(_type);
+    }
     public int GetLineIdsCount();
     
     void IVisitable.Accept(Visitor visitor)
@@ -143,9 +151,15 @@ public class Stop : IStop
     }
 
     public int GetId() => this.id;
+    public void SetId(int value) => id = value;
+
     public int GetLineId(int index) => this.line_ids[index];
     public string GetName() => this.name;
+    public void SetName(string value) => name = value;
+
     public typeEnum GetType() => this.type;
+    public void SetType(typeEnum value) => type = value;
+
     public int GetLineIdsCount() => this.line_ids.Count;
 }
 
@@ -190,19 +204,34 @@ public class StopString : IStop
     }
 
     public int GetId() => new Stop(this).GetId();
+    public void SetId(int value)
+    {
+        throw new NotImplementedException();
+    }
+
     public int GetLineId(int index) => new Stop(this).GetLineId(index);
     public string GetName() => new Stop(this).GetName();
+    public void SetName(string value)
+    {
+        throw new NotImplementedException();
+    }
+
     public typeEnum GetType() => new Stop(this).GetType();
+    public void SetType(typeEnum value)
+    {
+        throw new NotImplementedException();
+    }
+
     public int GetLineIdsCount() => new Stop(this).GetLineIdsCount();
 }
 
 public class StopHashMap : IStop
 {
     private static readonly HashMap _hashMap = new();
-    private readonly int id;
+    private int id;
     private readonly HashedList line_ids = new(_hashMap);
-    private readonly int name;
-    private readonly int type;
+    private int name;
+    private int type;
 
     public StopHashMap(IStop s)
     {
@@ -222,8 +251,14 @@ public class StopHashMap : IStop
     }
 
     public int GetId() => Convert.ToInt32(_hashMap[this.id]);
+    public void SetId(int value) => id = _hashMap.Add(value);
+
     public int GetLineId(int index) => this.line_ids[index];
     public string GetName() => _hashMap[this.name];
+    public void SetName(string value) => name = _hashMap.Add(value);
+
     public typeEnum GetType() => (typeEnum)Enum.Parse(typeof(typeEnum), _hashMap[this.type]);
+    public void SetType(typeEnum value) => type = _hashMap.Add(value.ToString());
+
     public int GetLineIdsCount() => this.line_ids.Count;
 }

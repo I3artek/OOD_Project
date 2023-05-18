@@ -5,6 +5,7 @@ namespace OOD_Project;
 public interface ITrambit : IVehicle
 {
     public int GetCarsNumber();
+    public void SetCarsNumber(int value);
     public int GetLineId();
     
     void IVisitable.Accept(Visitor visitor)
@@ -108,6 +109,8 @@ public class Trambit : Vehicle, ITrambit
     }
 
     public int GetCarsNumber() => this.carsNumber;
+    public void SetCarsNumber(int value) => carsNumber = value;
+
     public int GetLineId() => this.line_id;
 }
 
@@ -144,12 +147,17 @@ public class TrambitString : VehicleString, ITrambit
 
     public override int GetId() => new Trambit(this).GetId();
     public int GetCarsNumber() => new Trambit(this).GetCarsNumber();
+    public void SetCarsNumber(int value)
+    {
+        throw new NotImplementedException();
+    }
+
     public int GetLineId() => new Trambit(this).GetLineId();
 }
 
 public class TrambitHashMap : VehicleHashMap, ITrambit
 {
-    private readonly int carsNumber;
+    private int carsNumber;
     private readonly int lineId;
     
     public TrambitHashMap(ITrambit t) : base(t)
@@ -164,5 +172,7 @@ public class TrambitHashMap : VehicleHashMap, ITrambit
     }
 
     public int GetCarsNumber() => Convert.ToInt32(_hashMap[this.carsNumber]);
+    public void SetCarsNumber(int value) => carsNumber = _hashMap.Add(value);
+
     public int GetLineId() => Convert.ToInt32(_hashMap[this.lineId]);
 }

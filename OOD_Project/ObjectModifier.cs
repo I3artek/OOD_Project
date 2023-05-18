@@ -1,8 +1,8 @@
 namespace OOD_Project;
 
-public static class ObjectCreator
+public static class ObjectModifier
 {
-    private static Dictionary<string, string> GetAvailableFields(string typeName)
+    public static Dictionary<string, string> GetAvailableFields(string typeName)
     {
         return typeName switch
         {
@@ -36,6 +36,74 @@ public static class ObjectCreator
             },
             _ => throw new Exception()
         };
+    }
+
+    public static bool Modify(string typeName, IVisitable objectToEdit)
+    {
+        Dictionary<string, string> availableFields;
+        try
+        {
+            availableFields = GetAvailableFields(typeName);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"No class with name {typeName}");
+            throw;
+        }
+
+        var isModified = new Dictionary<string, bool>();
+        foreach (var (key, _) in availableFields)
+        {
+            isModified.Add(key, false);
+        }
+        
+        TaskTesting.WriteLineWithColor(
+            "Available Fields:", ConsoleColor.Cyan);
+        foreach (var availableFieldsKey in availableFields.Keys)
+        {
+            Console.WriteLine(availableFieldsKey);
+        }
+
+        Console.Write(">");
+        var command = Console.ReadLine();
+        while (command != "exit" && command != "done")
+        {
+            var values = command.Replace("\"", "")
+                .Split("=");
+            if (availableFields.ContainsKey(values[0]))
+            {
+                availableFields[values[0]] = values[1];
+                isModified[values[0]] = true;
+            }
+            else
+            {
+                Console.WriteLine($"Class {typeName} does not have field {values[0]}");
+            }
+            Console.Write(">");
+            command = Console.ReadLine();
+        }
+
+        if (command == "exit")
+            return false;
+
+        try
+        {
+            var Editor = new EditingVisitor();
+            foreach (var (key, modified) in isModified)
+            {
+                if (modified)
+                {
+                    Editor.Set(objectToEdit, key, availableFields[key]);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Provided field values are in wrong format");
+            throw;
+        }
+
+        return true;
     }
     
     public static IVisitable? Create(string typeName, string repName)

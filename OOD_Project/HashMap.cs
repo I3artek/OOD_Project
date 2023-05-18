@@ -22,7 +22,7 @@ public class HashMap
         }
         return hashed;
     }
-    
+
     /// <summary>
     /// Converts s to string and adds it to the hashmap
     /// </summary>
@@ -34,7 +34,7 @@ public class HashMap
     }
 
     public string this[int key] => _map[key];
-    
+
     public string Get(int key) => this[key];
 
     public static int GetHash(string s)

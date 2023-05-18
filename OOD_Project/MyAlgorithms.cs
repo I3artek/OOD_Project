@@ -61,6 +61,13 @@ public static class MyAlgorithms
         return count;
     }
     
+    public static int CountIf<T>(IMyCollection<T> collection, Func<T, bool> predicate)
+        where T : class
+    {
+        var it = collection.GetForwardEnumerator();
+        return CountIf(it, predicate);
+    }
+    
     public static void DoIf<T>(IMyCollection<T> collection, 
         Func<T, bool> predicate, Action<T> func)
         where T : class

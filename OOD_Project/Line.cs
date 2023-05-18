@@ -7,8 +7,11 @@ namespace OOD_Project;
 public interface ILine : IVisitable
 {
     public string GetNumberHex();
+    public void SetNumberHex(string value);
     public int GetNumberDec();
+    public void SetNumberDec(int value);
     public string GetCommonName();
+    public void SetCommonName(string value);
     public int GetStopId(int index);
     public int GetVehicleId(int index);
     public int GetStopIdsCount();
@@ -186,8 +189,14 @@ public class Line : ILine
     }
 
     public string GetNumberHex() => this.numberHex;
+    public void SetNumberHex(string value) => this.numberHex = value;
+
     public int GetNumberDec() => this.numberDec;
+    public void SetNumberDec(int value) => this.numberDec = value;
+
     public string GetCommonName() => this.commonName;
+    public void SetCommonName(string value) => this.commonName = value;
+
     public int GetStopId(int index) => this.stop_ids[index];
     public int GetVehicleId(int index) => this.vehicle_ids[index];
     public int GetStopIdsCount() => this.stop_ids.Count;
@@ -226,8 +235,23 @@ public class LineString : ILine
     }
     
     public string GetNumberHex() => new Line(this).GetNumberHex();
+    public void SetNumberHex(string value)
+    {
+        throw new NotImplementedException();
+    }
+
     public int GetNumberDec() => new Line(this).GetNumberDec();
+    public void SetNumberDec(int value)
+    {
+        throw new NotImplementedException();
+    }
+
     public string GetCommonName() => new Line(this).GetCommonName();
+    public void SetCommonName(string value)
+    {
+        throw new NotImplementedException();
+    }
+
     public int GetStopId(int index) => new Line(this).GetStopId(index);
     public int GetVehicleId(int index) => new Line(this).GetVehicleId(index);
     public int GetStopIdsCount() => new Line(this).GetStopIdsCount();
@@ -237,9 +261,9 @@ public class LineString : ILine
 public class LineHashMap : ILine
 {
     private static readonly HashMap _hashMap = new();
-    private readonly int numberHex;
-    private readonly int numberDec;
-    private readonly int commonName;
+    private int numberHex;
+    private int numberDec;
+    private int commonName;
     private readonly HashedList stop_ids = new(_hashMap);
     private readonly HashedList vehicle_ids = new(_hashMap);
 
@@ -264,8 +288,14 @@ public class LineHashMap : ILine
     }
 
     public string GetNumberHex() => _hashMap[numberHex];
+    public void SetNumberHex(string value) => numberHex = _hashMap.Add(value);
+
     public int GetNumberDec() => Convert.ToInt32(_hashMap[numberDec]);
+    public void SetNumberDec(int value) => numberDec = _hashMap.Add(value);
+
     public string GetCommonName() => _hashMap[commonName];
+    public void SetCommonName(string value) => commonName = _hashMap.Add(value);
+
     public int GetStopId(int index) => this.stop_ids[index];
     public int GetVehicleId(int index) => this.vehicle_ids[index];
     public int GetStopIdsCount() => this.stop_ids.Count;

@@ -6,6 +6,12 @@ public interface IBytebus : IVehicle
 {
     public int GetLineId(int index);
     public engineClassEnum GetEngineClass();
+    public void SetEngineClass(engineClassEnum value);
+    public void SetEngineClass(string value)
+    {
+        Enum.TryParse(value, out engineClassEnum _type);
+        SetEngineClass(_type);
+    }
     public int GetLineIdsCount();
     
     void IVisitable.Accept(Visitor visitor)
@@ -134,6 +140,8 @@ public class Bytebus : Vehicle, IBytebus
 
     public int GetLineId(int index) => this.line_ids[index];
     public engineClassEnum GetEngineClass() => this.engineClass;
+    public void SetEngineClass(engineClassEnum value) => engineClass = value;
+
     public int GetLineIdsCount() => this.line_ids.Count;
 }
 
@@ -179,6 +187,11 @@ public class BytebusString : VehicleString, IBytebus
 
     public int GetLineId(int index) => new Bytebus(this).GetLineId(index);
     public engineClassEnum GetEngineClass() => new Bytebus(this).GetEngineClass();
+    public void SetEngineClass(engineClassEnum value)
+    {
+        throw new NotImplementedException();
+    }
+
     public int GetLineIdsCount() => new Bytebus(this).GetLineIdsCount();
     public override int GetId() => new Bytebus(this).GetId();
 }
@@ -186,7 +199,7 @@ public class BytebusString : VehicleString, IBytebus
 public class BytebusHashMap : VehicleHashMap, IBytebus
 {
     private readonly HashedList line_ids = new(_hashMap);
-    private readonly int engineClass;
+    private int engineClass;
 
     public BytebusHashMap(IBytebus b) : base(b)
     {
@@ -206,5 +219,8 @@ public class BytebusHashMap : VehicleHashMap, IBytebus
     public int GetLineId(int index) => this.line_ids[index];
     public engineClassEnum GetEngineClass() => 
         (engineClassEnum)Enum.Parse(typeof(engineClassEnum), _hashMap[this.engineClass]);
+
+    public void SetEngineClass(engineClassEnum value) => engineClass = _hashMap.Add(value.ToString());
+
     public int GetLineIdsCount() => this.line_ids.Count;
 }
