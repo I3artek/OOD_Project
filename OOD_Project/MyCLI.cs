@@ -12,6 +12,7 @@ public static class MyCLI
     private static MaxHeap<IVisitable> AllObjectsMaxHeap;
     private static IMyCollection<IVisitable> AllObjects;
     private static CommandQueue CMDQ = new();
+    private static CommandHistory CMDH = new();
 
     static MyCLI()
     {
@@ -20,12 +21,14 @@ public static class MyCLI
         Commands.Add("find", Find);
         Commands.Add("add", Add);
         Commands.Add("edit", Edit);
-        Commands.Add("queue commit", QueueCommit);
-        Commands.Add("queue print", QueuePrint);
-        Commands.Add("queue export", QueueExport);
-        Commands.Add("queue load", QueueLoad);
         Commands.Add("delete", Delete);
-        Commands.Add("queue dismiss", QueueDismiss);
+        //Commands.Add("queue commit", QueueCommit);
+        //Commands.Add("queue print", QueuePrint);
+        //Commands.Add("queue dismiss", QueueDismiss);
+        //Commands.Add("queue export", QueueExport);
+        //Commands.Add("queue load", QueueLoad);
+        //todo Commands.Add("export", QueueExport);
+        //todo Commands.Add("load", QueueLoad);
     }
 
     public static List<string> GetConditions(string command)
@@ -116,15 +119,32 @@ public static class MyCLI
     {
         var action = 
             Regex.Match(command, ".+? ").Value[..^1];
-        if (action == "queue")
+        // if (action == "queue")
+        // {
+        //     action = 
+        //         Regex.Match(command, "queue .+? ").Value[..^1];
+        //     Commands[action](command);
+        // }
+        // else if (Commands.ContainsKey(action))
+        // {
+        //     CMDQ.Add(action, command);
+        // }
+        if (Commands.ContainsKey(action))
         {
-            action = 
-                Regex.Match(command, "queue .+? ").Value[..^1];
+            CMDH.AddCmd(action, command);
             Commands[action](command);
         }
-        else if (Commands.ContainsKey(action))
+        else if(action == "undo")
         {
-            CMDQ.Add(action, command);
+            CMDH.Undo(AllObjects);
+        }
+        else if(action == "redo")
+        {
+            var (a, c) = CMDH.Redo();
+            if (a != "")
+            {
+                Commands[a](c);
+            }
         }
         else
         {
@@ -134,6 +154,9 @@ public static class MyCLI
 
     private static void List(string command)
     {
+        CMDH.SetAffectedObjectBefore(null);
+        CMDH.SetAffectedObjectAfter(null);
+        
         var typeVisitor = new TypeNameVisitor();
         var typeName = Regex.Match(command, " [^ ]+").Value[1..];
         TaskTesting.WriteLineWithColor(
@@ -148,6 +171,9 @@ public static class MyCLI
 
     private static void Find(string command)
     {
+        CMDH.SetAffectedObjectBefore(null);
+        CMDH.SetAffectedObjectAfter(null);
+        
         var predicate = CreatePredicate(command);
         try
         {
@@ -161,6 +187,8 @@ public static class MyCLI
 
     private static void Add(string command)
     {
+        CMDH.SetAffectedObjectBefore(null);
+
         var values = command.Split(" ");
         var created = false;
         try
@@ -168,6 +196,7 @@ public static class MyCLI
             var obj = ObjectModifier.Create(values[1], values[2]);
             if (obj == null) return;
             AllObjects.Add(obj);
+            CMDH.SetAffectedObjectAfter(obj);
             created = true;
             TaskTesting.WriteLineWithColor("Created object:\n" + obj, ConsoleColor.Yellow);
         }
@@ -203,6 +232,9 @@ public static class MyCLI
             }
             TaskTesting.WriteLineWithColor(
                 "Found object:\n" + objectToEdit, ConsoleColor.DarkBlue);
+            
+            CMDH.SetAffectedObjectBefore(objectToEdit);
+
             if (ObjectModifier.Modify(typeName, objectToEdit))
             {
                 TaskTesting.WriteLineWithColor(
@@ -213,6 +245,8 @@ public static class MyCLI
                 TaskTesting.WriteLineWithColor(
                     "Object not modified!", ConsoleColor.Red);
             }
+
+            CMDH.SetAffectedObjectAfter(objectToEdit);
         }
         catch (Exception e)
         {
@@ -285,6 +319,9 @@ public static class MyCLI
             }
             TaskTesting.WriteLineWithColor(
                 "Found object:\n" + objectToDelete, ConsoleColor.DarkBlue);
+            
+            CMDH.SetAffectedObjectBefore(objectToDelete);
+
             AllObjects.Remove(objectToDelete);
             TaskTesting.WriteLineWithColor(
                 "Deleted the object from collection", ConsoleColor.DarkBlue);
