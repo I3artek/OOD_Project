@@ -5,6 +5,14 @@ public class CommandHistory
     private List<Command> to_undo = new();
     private List<Command> to_redo = new();
 
+    private bool is_redo = false;
+
+    public bool IsRedo()
+    {
+        var tmp = is_redo;
+        is_redo = false;
+        return tmp;
+    }
     
     public void AddCmd(string cmdName, string cmdString)
     {
@@ -13,7 +21,15 @@ public class CommandHistory
     
     public void SetAffectedObjectBefore(IVisitable? o)
     {
-        to_undo.Last().affectedObjectBefore = o;
+        if (to_undo.Last().cmdName == "edit")
+        {
+            var sv = new StateVisitor();
+            to_undo.Last().affectedObjectBefore = sv.CreateStateObject(o!);
+        }
+        else
+        {
+            to_undo.Last().affectedObjectBefore = o;
+        }
     }
     public void SetAffectedObjectAfter(IVisitable? o)
     {
@@ -24,27 +40,44 @@ public class CommandHistory
     {
         if(to_undo.Count == 0)
             return;
-        if (to_undo.Last().affectedObjectAfter == to_undo.Last().affectedObjectBefore)
+
+        var cmdToUndo = to_undo.Last();
+        switch (cmdToUndo.cmdName)
         {
-            //no modification or both null
+            case "list":
+                //do nothing
+                break;
+            case "find":
+                //do nothing
+                break;
+            case "add":
+                collection.Remove(to_undo.Last().affectedObjectAfter!);
+                break;
+            case "edit":
+                //for implementing more advanced redo:
+                var s = new StateVisitor();
+                //save current state (after editing)
+                var tmpState = s.CreateStateObject(to_undo.Last().affectedObjectAfter!);
+
+                var sv = new StateVisitor();
+                //load the saved state from before edit
+                sv.SetState(to_undo.Last().affectedObjectBefore!);
+                //apply the changes to the object that was edited
+                sv.SetState(to_undo.Last().affectedObjectAfter!);
+                
+                //for implementing more advanced redo:
+                to_undo.Last().affectedObjectBefore = tmpState;
+                
+                break;
+            case "delete":
+                collection.Add(to_undo.Last().affectedObjectBefore!);
+                break;
+            default:
+                break;
         }
-        else if(to_undo.Last().affectedObjectAfter == null && to_undo.Last().affectedObjectBefore != null)
-        {
-            //was object, is null
-            collection.Add(to_undo.Last().affectedObjectBefore);
-        }
-        else if(to_undo.Last().affectedObjectBefore == null && to_undo.Last().affectedObjectAfter != null)
-        {
-            //was null, is object
-            collection.Remove(to_undo.Last().affectedObjectAfter);
-        }
-        else
-        {
-            //both are not null and different
-            collection.Remove(to_undo.Last().affectedObjectAfter);
-            collection.Add(to_undo.Last().affectedObjectBefore);
-        }
-        
+
+        var tmp = to_undo.Last();
+        to_redo.Add(tmp);
         to_undo.RemoveAt(to_undo.Count - 1);
     }
 
@@ -56,6 +89,37 @@ public class CommandHistory
         tmp.Item1 = to_redo.Last().cmdName;
         tmp.Item2 = to_redo.Last().cmdString;
         to_redo.RemoveAt(to_redo.Count - 1);
+        is_redo = true;
+        return tmp;
+    }
+    
+    public (string, string) Redo(IMyCollection<IVisitable> collection)
+    {
+        if(to_redo.Count == 0)
+            return ("", "");
+        var tmp = ("", "");
+        switch (to_redo.Last().cmdName)
+        {
+            //if add and edit are supposed to be redone
+            //with memory of what user typed
+            case "add":
+                collection.Add(to_redo.Last().affectedObjectAfter!);
+                return tmp;
+            case "edit":
+            {
+                var sv = new StateVisitor();
+                //load the saved state from before edit
+                sv.SetState(to_redo.Last().affectedObjectBefore!);
+                //apply the changes to the object that was edited
+                sv.SetState(to_redo.Last().affectedObjectAfter!);
+                return tmp;
+            }
+        }
+
+        tmp.Item1 = to_redo.Last().cmdName;
+        tmp.Item2 = to_redo.Last().cmdString;
+        to_redo.RemoveAt(to_redo.Count - 1);
+        is_redo = true;
         return tmp;
     }
 }

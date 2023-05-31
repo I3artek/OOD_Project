@@ -140,7 +140,7 @@ public static class MyCLI
         }
         else if(action == "redo")
         {
-            var (a, c) = CMDH.Redo();
+            var (a, c) = CMDH.Redo(AllObjects);
             if (a != "")
             {
                 Commands[a](c);
@@ -154,9 +154,13 @@ public static class MyCLI
 
     private static void List(string command)
     {
-        CMDH.SetAffectedObjectBefore(null);
-        CMDH.SetAffectedObjectAfter(null);
-        
+        var isRedo = CMDH.IsRedo();
+        if (!isRedo)
+        {
+            CMDH.SetAffectedObjectBefore(null);
+            CMDH.SetAffectedObjectAfter(null);
+        }
+
         var typeVisitor = new TypeNameVisitor();
         var typeName = Regex.Match(command, " [^ ]+").Value[1..];
         TaskTesting.WriteLineWithColor(
@@ -171,8 +175,12 @@ public static class MyCLI
 
     private static void Find(string command)
     {
-        CMDH.SetAffectedObjectBefore(null);
-        CMDH.SetAffectedObjectAfter(null);
+        var isRedo = CMDH.IsRedo();
+        if (!isRedo)
+        {
+            CMDH.SetAffectedObjectBefore(null);
+            CMDH.SetAffectedObjectAfter(null);
+        }
         
         var predicate = CreatePredicate(command);
         try
@@ -187,7 +195,9 @@ public static class MyCLI
 
     private static void Add(string command)
     {
-        CMDH.SetAffectedObjectBefore(null);
+        var isRedo = CMDH.IsRedo();
+        if(!isRedo)
+            CMDH.SetAffectedObjectBefore(null);
 
         var values = command.Split(" ");
         var created = false;
@@ -196,7 +206,8 @@ public static class MyCLI
             var obj = ObjectModifier.Create(values[1], values[2]);
             if (obj == null) return;
             AllObjects.Add(obj);
-            CMDH.SetAffectedObjectAfter(obj);
+            if(!isRedo)
+                CMDH.SetAffectedObjectAfter(obj);
             created = true;
             TaskTesting.WriteLineWithColor("Created object:\n" + obj, ConsoleColor.Yellow);
         }
@@ -215,6 +226,8 @@ public static class MyCLI
 
     private static void Edit(string command)
     {
+        var isRedo = CMDH.IsRedo();
+        
         var xd = command.Split(" ");
         var typeName = xd[1];
 
@@ -232,8 +245,8 @@ public static class MyCLI
             }
             TaskTesting.WriteLineWithColor(
                 "Found object:\n" + objectToEdit, ConsoleColor.DarkBlue);
-            
-            CMDH.SetAffectedObjectBefore(objectToEdit);
+            if(!isRedo)
+                CMDH.SetAffectedObjectBefore(objectToEdit);
 
             if (ObjectModifier.Modify(typeName, objectToEdit))
             {
@@ -245,8 +258,8 @@ public static class MyCLI
                 TaskTesting.WriteLineWithColor(
                     "Object not modified!", ConsoleColor.Red);
             }
-
-            CMDH.SetAffectedObjectAfter(objectToEdit);
+            if(!isRedo)
+                CMDH.SetAffectedObjectAfter(objectToEdit);
         }
         catch (Exception e)
         {
