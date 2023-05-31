@@ -132,23 +132,38 @@ public static class MyCLI
         if (Commands.ContainsKey(action))
         {
             CMDH.AddCmd(action, command);
+            CMDQ.Add(action, command);//acts as the printable history
             Commands[action](command);
         }
-        else if(action == "undo")
+        else switch (action)
         {
-            CMDH.Undo(AllObjects);
-        }
-        else if(action == "redo")
-        {
-            var (a, c) = CMDH.Redo(AllObjects);
-            if (a != "")
+            case "undo":
+                CMDH.Undo(AllObjects);
+                break;
+            case "redo":
             {
-                Commands[a](c);
+                var (a, c) = CMDH.Redo(AllObjects);
+                if (a != "")
+                {
+                    Commands[a](c);
+                }
+
+                break;
             }
-        }
-        else
-        {
-            Console.WriteLine($"There's no command \"{action}\"");
+            case "history":
+                Console.WriteLine(CMDQ);
+                break;
+            case "export":
+                QueueExport(command, CMDQ);
+                break;
+            case "load":
+                var tmp = new CommandQueue();
+                QueueLoad(command, tmp);
+                QueueCommit(command, tmp);
+                break;
+            default:
+                Console.WriteLine($"There's no command \"{action}\"");
+                break;
         }
     }
 
@@ -267,51 +282,51 @@ public static class MyCLI
         }
     }
 
-    private static void QueuePrint(string command)
+    private static void QueuePrint(string command, CommandQueue cq)
     {
-        Console.WriteLine(CMDQ);
+        Console.WriteLine(cq);
     }
 
-    private static void QueueCommit(string command)
+    private static void QueueCommit(string command, CommandQueue cq)
     {
-        var c = CMDQ.Pop();
+        var c = cq.Pop();
         while (c != null)
         {
             TaskTesting.WriteLineWithColor(
                 "Executing \"" + c.Value.Item2 + "\"\n", ConsoleColor.Green);
             Commands[c.Value.Item1](c.Value.Item2);
-            c = CMDQ.Pop();
+            c = cq.Pop();
         }
     }
 
-    private static void QueueExport(string command)
+    private static void QueueExport(string command, CommandQueue cq)
     {
         var args = command.Replace(
-            "queue export ", "").Split(" ");
+            "export ", "").Split(" ");
         switch (args[1])
         {
             case "XML":
-                CMDQ.ExportToXML(args[0]);
+                cq.ExportToXML(args[0]);
                 break;
             case "plaintext":
-                CMDQ.ExportToPlainText(args[0]);
+                cq.ExportToPlainText(args[0]);
                 break;
         }
     }
 
-    private static void QueueLoad(string command)
+    private static void QueueLoad(string command, CommandQueue cq)
     {
         var filename = command
-            .Replace("queue load ", "")
+            .Replace("load ", "")
             .Replace(" ", "");
         var ext = Regex.Match(filename, "[.].+").Value[1..];
         switch (ext)
         {
             case "xml":
-                CMDQ.LoadFromXML(filename);
+                cq.LoadFromXML(filename);
                 break;
             case "txt":
-                CMDQ.LoadFromPlainText(filename);
+                cq.LoadFromPlainText(filename);
                 break;
         }
     }

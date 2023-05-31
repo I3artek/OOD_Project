@@ -13,7 +13,17 @@ public class CommandHistory
         is_redo = false;
         return tmp;
     }
-    
+
+    public override string ToString()
+    {
+        var str = "Command History:\n";
+        foreach (var command in to_undo)
+        {
+            str += command.cmdString + "\n";
+        }
+        return str;
+    }
+
     public void AddCmd(string cmdName, string cmdString)
     {
         to_undo.Add(new Command(cmdName, cmdString));
